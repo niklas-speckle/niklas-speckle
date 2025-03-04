@@ -1,6 +1,6 @@
 # :information_desk_person: About Me
 
-I have an interdisciplinary background in Psychology, Computer Science, and Management and Economics. My expertise lies in statistical analysis, software development, and healthcare. I am passionate about leveraging technology to improve patient outcomes.
+Throughout my academic and professional journey, I have followed a path that combines statistical analysis, programming, and healthcare. My interest in programming and statistics was first sparked during my time as a student assistant at the Department of Statistics. This experience led me to specialize in statistics whenever possible by selecting relevan electives throughout my studies. Fascinated by the power of data to uncover insights, I initially pursued a Master’s degree in Data Science. However, I soon realized that I was missing the human and health-related aspects that had always been central to my interests. Consequently, I decided to combine psychology and computer science, allowing me to merge my passion for healthcare with my enthusiasm for data analysis.
 
 # :books: Educational Background
 
@@ -83,4 +83,5 @@ I have an interdisciplinary background in Psychology, Computer Science, and Mana
 - Text Mining (5 ECTS)
 - Linear Algebra and Mathematics (10 ECTS)
 
-I am currently working on my GitHub portfolio. Projects will follow the next days.
+# Projects 
+Projects will be available shortly on my GitHub.
