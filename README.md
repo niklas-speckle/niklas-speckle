@@ -82,3 +82,5 @@ I have an interdisciplinary background in Psychology, Computer Science, and Mana
 - Diagnostics and Psychometry (20 ECTS)
 - Text Mining (5 ECTS)
 - Linear Algebra and Mathematics (10 ECTS)
+
+I am currently working on my GitHub portfolio. Projects will follow the next days.
