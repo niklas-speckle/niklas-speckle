@@ -7,7 +7,10 @@ I have an interdisciplinary background in Psychology, Computer Science, and Mana
 - :computer: **Extension Program in Computer Science**
 - :busts_in_silhouette: **Bachelor and Master in Psychology**
 - :chart_with_upwards_trend: **Bachelor in Management and Economics**
-  
+
+📕 **Master Thesis:**   *Maternal sleep duration and quality during pregnancy and newborn telomere length: A prospective study with objective and subjective sleep measures.*  
+- For my master's thesis, I worked with actigraphy data to measure sleep duration. This confirmed my interest in working with complex clinical datasets.
+
 # :hammer: Professional Background
 
 - 👪 **Social Worker**: 3-year experience in working with psychiatric patients
