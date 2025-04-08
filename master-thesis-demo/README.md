@@ -12,7 +12,7 @@
 > - This is **not a full reproduction** of all the work I have done during the thesis  
 > - **Due to legal and ethical restrictions, the dataset is not included** 
 >
-> To inspect the technical part of my work (data preprocessing and analysis) see [Technical Background](#technical-background)
+> To inspect the technical part of my work (data preprocessing and analysis) see [Technical Background](#:computer:-technical-background)
 
 ## :books: Introduction
 
@@ -45,7 +45,7 @@ This section showcases the technical workflow behind my Master's thesis and is c
 - **Language:** <i class="devicon-r-plain colored"></i>
 - **Libraries:** `ggplot2`, `roxygen2`, `todor`
 - **Version Control:** <i class="devicon-git-plain colored"></i>
-- **Structure:** Modular `R` scripts with orchestrated execution (see [scripts/](scripts/)
+- **Structure:** Modular `R` scripts with orchestrated execution (see [scripts/](scripts/))
 
 ## :signal_strength: Data Overview
 
