@@ -45,7 +45,7 @@ This section showcases the technical workflow behind my Master's thesis and is c
 - **Language:** <i class="devicon-r-plain colored"></i>
 - **Libraries:** `ggplot2`, `roxygen2`, `todor`
 - **Version Control:** <i class="devicon-git-plain colored"></i>
-- **Structure:** Modular `R` scripts with orchestrated execution (see scripts folder)
+- **Structure:** Modular `R` scripts with orchestrated execution (see [scripts/](scripts/)
 
 ## :signal_strength: Data Overview
 
@@ -71,7 +71,7 @@ This section showcases the technical workflow behind my Master's thesis and is c
 5. Data integration
     - Final dataset includes joined sleep questionnaire data, telomere length, covariates and additional questionnaires
 
-:information_source: **For more details on the preprocessing algorithm see the program flow chart. Note: The program flow chart does not exactly represent the algorithm as minor changes were applied afterwards.**
+:information_source: **For more details on the preprocessing algorithm see the [Program Flow Chart](img/preprocessing-plan_flow-diagram.png). Note: The program flow chart does not exactly represent the algorithm as minor changes were applied afterwards.**
 
 ## :bar_chart: Statistical Analysis
 - **Model Type:** Linear Regression
