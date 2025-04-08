@@ -12,7 +12,7 @@
 > - This is **not a full reproduction** of all the work I have done during the thesis  
 > - **Due to legal and ethical restrictions, the dataset is not included** 
 >
-> To inspect the technical part of my work (data preprocessing and analysis) see [Technical Background](#:computer:-technical-background)
+> To inspect the technical part of my work (data preprocessing and analysis) see [Technical Background](#technical-background)
 
 ## :books: Introduction
 
@@ -37,6 +37,8 @@ questionnaire and a sleep diary. Objective sleep duration was measured using che
 
   
     
+<a name="technical-background">
+</a>
 
 # :computer: Technical Background
 This section showcases the technical workflow behind my Master's thesis and is centered around the preprocessing and statistical analysis of sensor data.
@@ -91,3 +93,4 @@ All figures were generated using ``ggplot2``, with custom visualizations for dis
 - Defining accurate sleep/wake events with real-world sensor noise
 - Handling incomplete days and asynchronous start times
 - Managing multi-source data integration robustly
+
