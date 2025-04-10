@@ -85,7 +85,7 @@ The entire workflow is organized in the scripts/ folder. Key features:
 - Modular function files (e.g., `sensor_functions.R` -> `sensor_preprocessing.R`) contain reusable code for data handling.
 
 ## :chart_with_upwards_trend: Visulatization
-All figures were generated using ``ggplot2``, with custom visualizations for distributions, model predictions, and interaction effects.
+All figures were generated using ``ggplot2``.
 
 ## :warning: Challanges Addressed
 - Defining accurate sleep/wake events with real-world sensor noise
