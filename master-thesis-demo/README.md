@@ -1,6 +1,5 @@
 <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
-
-
+          
 # :dna: Maternal sleep duration and quality during pregnancy and newborn telomere length: A prospective study with objective and subjective sleep measures.
 
 > ⚠️ This repository was created to **showcase my Master’s thesis** and includes:
@@ -44,9 +43,8 @@ questionnaire and a sleep diary. Objective sleep duration was measured using che
 This section showcases the technical workflow behind my Master's thesis and is centered around the preprocessing and statistical analysis of sensor data.
 
 ## :wrench: Tools & Environment
-- **Language:** <i class="devicon-r-plain colored"></i>
+- **Language:** <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/r/r-original.svg" height=20/>
 - **Libraries:** `ggplot2`, `roxygen2`, `todor`
-- **Version Control:** <i class="devicon-git-plain colored"></i>
 - **Structure:** Modular `R` scripts with orchestrated execution (see [scripts/](scripts/))
 
 ## :signal_strength: Data Overview
