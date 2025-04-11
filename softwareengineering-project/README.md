@@ -21,6 +21,23 @@ The device communicates via Bluetooth Low Energy (BLE) with a Raspberry Pi (Acce
 
 A detailed project description is available here: [Project Description (PDF)](artefacts/Projektidee.pdf)
 
+## :clipboard: Architecture Overview
+
+![](artefacts/architekturuebersicht.jpg)
+
+## :sparkles: Main Features
+
+- **Status Switching via Button:** Four working modes (Present, Meeting, Deep Work, Out-of-Office) can be selected directly on the device.
+- **Status Display:** The current working mode is shown via LED on the device and in the web application.
+- **Indoor Climate Monitoring:** Continuous measurement of environmental conditions (e.g., humidity, light intensity).
+- **Notifications:** Email and in-app alerts when climate thresholds are exceeded.
+- **Time Tracking & Project Assignment:** Manage and correct time logs via the web application.
+- **Device & User Management:** Central management of Tempera devices and access points, and their assignment to users.
+- **Data Visualization:** Clear diagrams show working patterns and environmental data.
+- **Team Overview:** Team leads can view activities of their team members.
+
+A detailed list of project requirements can be found here: [Requirements PDF](artefacts/Anforderungsliste.pdf)
+
 ## :wrench: Tech Stack
 
 **Hardware:**
@@ -42,21 +59,3 @@ A detailed project description is available here: [Project Description (PDF)](ar
 - <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/junit/junit-original.svg" width=20/> JUnit  
 - <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/gitlab/gitlab-original.svg" width=25/> GitLab  
 - <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/maven/maven-original.svg" width=25/> Maven
-
-
-## :sparkles: Main Features
-
-- **Status Switching via Button:** Four working modes (Present, Meeting, Deep Work, Out-of-Office) can be selected directly on the device.
-- **Status Display:** The current working mode is shown via LED on the device and in the web application.
-- **Indoor Climate Monitoring:** Continuous measurement of environmental conditions (e.g., humidity, light intensity).
-- **Notifications:** Email and in-app alerts when climate thresholds are exceeded.
-- **Time Tracking & Project Assignment:** Manage and correct time logs via the web application.
-- **Device & User Management:** Central management of Tempera devices and access points, and their assignment to users.
-- **Data Visualization:** Clear diagrams show working patterns and environmental data.
-- **Team Overview:** Team leads can view activities of their team members.
-
-A detailed list of project requirements can be found here: [Requirements PDF](artefacts/Anforderungsliste.pdf)
-
-## :clipboard: Architecture Overview
-
-![](artefacts/architekturuebersicht.jpg)
