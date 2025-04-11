@@ -4,13 +4,14 @@
 
 > ⚠️ This repository was created to **showcase my Master’s thesis** and includes:
 > - The `R` scripts used for data preprocessing and analysis  
-> - The final written thesis report (PDF)  
 > - A summary of the project in this README  
 > 
 > Please note:
 > - This is **not a full reproduction** of all the work I have done during the thesis  
 > - **Due to legal and ethical restrictions, the dataset is not included** 
 >
+> You can access the published thesis in full at the following link: [Maternal sleep duration and quality during pregnancy and newborn telomere length : a prospective study with objective and subjective sleep measures](https://ulb-dok.uibk.ac.at/urn/urn:nbn:at:at-ubi:1-167749)  
+>  
 > To inspect the technical part of my work (data preprocessing and analysis) see [Technical Background](#technical-background)
 
 ## :books: Introduction
