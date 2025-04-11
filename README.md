@@ -84,6 +84,7 @@ Throughout my academic and professional journey, I have followed a path that com
 - Linear Algebra and Mathematics (10 ECTS)
 
 # Projects 
+- [Tempera - Software Engineering](softwareengineering-project)
 - [Master Thesis](master-thesis-demo)
 
 More projects will be available shortly on my GitHub.
