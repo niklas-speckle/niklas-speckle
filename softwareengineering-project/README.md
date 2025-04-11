@@ -8,6 +8,7 @@
 > The project was implemented by a team of five people. <span style="color:red">**Together with two other team members, I was responsible for implementing the Java-based web application.**</span>  
 >   
 > Due to licensing restrictions, parts of the project have been removed. Therefore, this repository serves as a showcase of the project and is not a fully executable system. You can find a quick visual demo here:  [Showcase](presentations/demo.md).
+> The source code of the `Java`-based Web Application can be found in [src/](src/)
 
 ## :bulb: Project Overview
 
