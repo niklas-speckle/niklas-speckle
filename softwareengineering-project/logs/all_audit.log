@@ -1,0 +1,8 @@
+2025-04-11 10:57:36 - Application Lifecycle Event: Application context refreshed
+2025-04-11 10:57:44 - {action=LOGIN, status=ERROR, accessedResource='USER: user1', authenticatedUser='unauthenticated user', additionalDetails='Bad credentials'}
+2025-04-11 10:57:47 - {action=LOGIN, status=SUCCESS, accessedResource='USER: admin', authenticatedUser='admin', additionalDetails='null'}
+2025-04-11 10:58:01 - Application Lifecycle Event: Application context closed
+2025-04-11 11:00:56 - Application Lifecycle Event: Application context refreshed
+2025-04-11 11:01:09 - {action=LOGIN, status=ERROR, accessedResource='USER: user1', authenticatedUser='unauthenticated user', additionalDetails='Bad credentials'}
+2025-04-11 12:20:57 - {action=LOGIN, status=SUCCESS, accessedResource='USER: user2', authenticatedUser='user2', additionalDetails='null'}
+2025-04-11 12:22:33 - {action=LOGIN, status=SUCCESS, accessedResource='USER: admin', authenticatedUser='admin', additionalDetails='null'}

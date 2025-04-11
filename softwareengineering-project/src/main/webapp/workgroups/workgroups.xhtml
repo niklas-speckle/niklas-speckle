@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <h:form id="workGroupForm" onkeypress="if (event.key === 'Enter') {return false;}">
+            <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+            <p:commandButton value="Create New Group" action="#{workGroupDetailController.createNewWorkGroup()}"
+                             rendered="#{sessionInfoBean.hasRole('MANAGER') or sessionInfoBean.hasRole('ADMINISTRATOR')}"
+                             update=":newWorkGroupDialog" oncomplete="PF('newWorkGroupDialog').show()"
+                             icon="pi pi-plus" styleClass="ui-button-success"/>
+            <div class="card-header" style="margin-top: 10px">
+                <h:outputText value="To enable sorting by multiple columns, hold ctrl while you click on the sorting icon."
+                              style="color: #126198; font-weight: bold"/>
+            </div>
+            <p:dataTable id="workGroupsTable" var="workGroup" value="#{workGroupListController.workGroups}" reflow="true">
+                <p:column headerText="Name" sortBy="#{workGroup.name}" filterBy="#{workGroup.name}"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{workGroup.name}"/>
+                </p:column>
+                <p:column headerText="Group Leader" sortBy="#{workGroup.groupLeader.username}"
+                          filterBy="#{workGroup.groupLeader.username}" filterMatchMode="contains">
+                    <h:outputText value="#{workGroup.groupLeader.username}"/>
+                </p:column>
+                <p:column headerText="Description" sortBy="#{workGroup.description}" filterBy="#{workGroup.description}"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{workGroup.description}"/>
+                </p:column>
+                <p:column headerText="Users" filterBy="#{workGroup.users}" filterMatchMode="contains">
+                    <ui:repeat value="#{workGroup.users}" var="user">
+                        <h:outputText value="#{user.username}"/>
+                        <br/>
+                    </ui:repeat>
+                </p:column>
+                <p:column headerText="Disabled" sortBy="#{workGroup.disabled}" filterBy="#{workGroup.disabled}"
+                          filterValue="false" filterMatchMode="contains">
+                    <h:outputText value="#{workGroup.disabled}"/>
+                </p:column>
+
+
+                <p:column style="width:100px;text-align: center" headerText="Actions">
+                    <p:commandButton update=":workGroupEditDialog"
+                                     rendered="#{(sessionInfoBean.hasRole('ADMINISTRATOR') or sessionInfoBean.hasRole('MANAGER')) and not (workGroup.disabled)}"
+                                     oncomplete="PF('workGroupEditDialog').show()"
+                                     icon="pi pi-file-edit" title="Edit"
+                                     style="margin: 5px">
+                        <f:setPropertyActionListener value="#{workGroup}"
+                                                     target="#{workGroupDetailController.workGroup}"/>
+                    </p:commandButton>
+                    <p:commandButton action="#{workGroupDetailController.doDeleteWorkGroup}"
+                                     rendered="#{(sessionInfoBean.hasRole('ADMINISTRATOR') or sessionInfoBean.hasRole('MANAGER')) and not (workGroup.disabled)}"
+                                     icon="pi pi-trash"
+                                     title="Delete" update=":workGroupForm"
+                                     style="margin: 5px">
+                        <f:setPropertyActionListener value="#{workGroup}"
+                                                     target="#{workGroupDetailController.workGroup}"/>
+                        <p:confirm header="Confirmation"
+                                   message="The workgroup will be disabled. You cannot undo this operation. Are you sure you want to proceed?"
+                                   icon="ui-icon-alert"/>
+                    </p:commandButton>
+                    <p:commandButton
+                            rendered="#{(sessionInfoBean.hasRole('GROUP_LEADER') and sessionInfoBean.currentUser eq workGroup.groupLeader) and not (workGroup.disabled)}"
+                            update=":workGroupEditDialog"
+                            oncomplete="PF('workGroupEditDialog').show()" value="Assign Employees"
+                            style="margin: 5px">
+                        <f:setPropertyActionListener value="#{workGroup}"
+                                                     target="#{workGroupDetailController.workGroup}"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+            <p:dialog header="New Work Group" id="newWorkGroupDialog" widgetVar="newWorkGroupDialog" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="true" closable="false">
+                <h:form id="createForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                <p:outputPanel id="newWorkGroupData" rendered="#{not empty workGroupDetailController.workGroup}">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="newName" value="Name: "/>
+                        <p:inputText
+                                id="newName"
+                                value="#{workGroupDetailController.workGroup.name}"
+                                maxlength="150" required="true" requiredMessage="Name must not be empty."/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="newDescription" value="Description: "/>
+                        <p:inputText
+                                id="newDescription"
+                                value="#{workGroupDetailController.workGroup.description}"
+                                maxlength="250" required="true" requiredMessage="Description must not be empty."/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3">
+                        <p:commandButton value="Save"
+                                         icon="pi pi-save"
+                                         action="#{workGroupDetailController.doSaveWorkGroup()}"
+                                         oncomplete="PF('newWorkGroupDialog').hide();"
+                                         update=":workGroupForm:msg, :createForm"/>
+                        <p:commandButton value="Abort"
+                                         icon="pi pi-times"
+                                         action="#{workGroupDetailController.doResetWorkGroup()}"
+                                         onclick="PF('newWorkGroupDialog').hide()"
+                                         update=":workGroupForm, :createForm"
+                                         immediate="true"
+                                         resetValues="true"/>
+                    </h:panelGrid>
+                </p:outputPanel>
+                </h:form>
+            </p:dialog>
+
+            <p:dialog header="Edit Work Group" id="workGroupEditDialog" widgetVar="workGroupEditDialog" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="true" closable="false">
+                <h:form id="editForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                <p:outputPanel id="workGroupData" rendered="#{not empty workGroupDetailController.workGroup}">
+                    <p:outputPanel
+                            rendered="#{sessionInfoBean.hasRole('ADMINISTRATOR') or sessionInfoBean.hasRole('MANAGER')}">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel for="name" value="Name: "/>
+                            <p:inputText id="name" value="#{workGroupDetailController.workGroup.name}" maxlength="150" required="true" requiredMessage="Name must not be empty."/>
+                        </h:panelGrid>
+                        <p:separator/>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel for="description" value="Description: "/>
+                            <p:inputTextarea id="description"
+                                             value="#{workGroupDetailController.workGroup.description}"
+                                             maxlength="250" required="true" requiredMessage="Description must not be empty."/>
+                        </h:panelGrid>
+                        <p:separator/>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel for="groupLeader" value="Group Leader: "/>
+                            <p:selectOneMenu
+                                    id="groupLeader"
+                                    value="#{workGroupDetailController.selectedGroupLeader}"
+                                    converter="userConverter"
+                                    filter="true"
+                                    filterMatchMode="startsWith">
+                                <f:selectItems value="#{userListController.selectItemsGroupLeadersList}"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <p:separator/>
+                    </p:outputPanel>
+                    <p:outputPanel rendered="#{sessionInfoBean.hasRole('GROUP_LEADER') or sessionInfoBean.hasRole('ADMINISTRATOR')}">
+                        <div class="card-header">
+                            <h5>Assign Users:</h5>
+                        </div>
+                        <h:panelGrid columns="2" id="selectManyUsers">
+                            <p:outputLabel for="users" value="Users: "/>
+                            <p:selectManyMenu
+                                    id="users"
+                                    value="#{workGroupDetailController.selectedUsers}"
+                                    converter="userConverter"
+                                    showCheckbox="true"
+                                    scrollHeight="150"
+                                    filter="true"
+                                    filterMatchMode="startsWith">
+                                <f:selectItems value="#{userListController.selectItemsUserListWithoutNullOption}"/>
+                            </p:selectManyMenu>
+                            <p:commandButton value="Deselect All"
+                                             update=":editForm:selectManyUsers"
+                                             action="#{workGroupDetailController.doDeselectAllUsers()}"/>
+                        </h:panelGrid>
+                        <p:separator/>
+                    </p:outputPanel>
+
+                    <h:panelGrid columns="2">
+                        <p:commandButton value="Save"
+                                         icon="pi pi-save"
+                                         action="#{workGroupDetailController.doSaveWorkGroup()}"
+                                         oncomplete="PF('workGroupEditDialog').hide();"
+                                         update=":workGroupForm:msg, :editForm"/>
+                        <p:commandButton
+                                value="Abort"
+                                icon="pi pi-times"
+                                onclick="PF('workGroupEditDialog').hide()"
+                                action="#{workGroupDetailController.doResetWorkGroup()}"
+                                update=":workGroupForm, :editForm"
+                                immediate="true"
+                                resetValues="true"/>
+                    </h:panelGrid>
+                </p:outputPanel>
+                </h:form>
+            </p:dialog>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" width="300">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+
+    </ui:define>
+</ui:composition>

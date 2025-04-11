@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <h:form id="temperaForm" onkeypress="if (event.key === 'Enter') {return false;}">
+            <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+            <p:commandButton
+                    value="Create Tempera Device"
+                    action="#{temperaDeviceDetailController.createTemperaDevice()}"
+                    icon="pi pi-plus"
+                    update="temperaForm"
+                    style="margin-right: 25px"/>
+
+            <p:commandButton
+                    value="Setup Information"
+                    action="/admin/temperaSetup"
+                    icon="pi pi-info-circle"/>
+
+
+            <div class="card-header" style="margin-top: 10px">
+                <h:outputText value="To enable sorting by multiple columns, hold ctrl while you click on the sorting icon."
+                              style="color: #126198; font-weight: bold"/>
+            </div>
+            <p:dataTable id="temperaTable" var="tempera" value="#{temperaDeviceListController.temperaDeviceBeans}" reflow="true">
+                <p:column headerText="ID" sortBy="#{tempera.temperaDevice.id}" filterBy="#{tempera.temperaDevice.id}"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{tempera.temperaDevice.id}"/>
+                </p:column>
+                <p:column headerText="Room" sortBy="#{tempera.temperaDevice.accessPoint.room.roomNumber}"
+                          filterBy="#{tempera.temperaDevice.accessPoint.room.roomNumber}" filterMatchMode="contains">
+                    <h:outputText value="#{tempera.temperaDevice.accessPoint.room.roomNumber}"/>
+                </p:column>
+                <p:column headerText="Access Point" sortBy="#{tempera.accessPoint.id}"
+                          filterBy="#{tempera.accessPoint.id}" filterMatchMode="contains">
+                    <h:outputText value="#{tempera.accessPoint.id}"/>
+                </p:column>
+                <p:column headerText="User" sortBy="#{tempera.user.username}" filterBy="#{tempera.user.username}"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{tempera.user.username}"/>
+                </p:column>
+                <p:column headerText="Status" sortBy="#{tempera.temperaDevice.status}"
+                          filterBy="#{tempera.temperaDevice.status}" filterMatchMode="contains">
+                    <h:outputText value="#{tempera.temperaDevice.status}"/>
+                </p:column>
+                <p:column style="width:100px;text-align: center" headerText="Actions">
+                    <p:commandButton
+                            oncomplete="PF('temperaEditDialog').show()"
+                            icon="pi pi-pencil"
+                            update="temperaForm"
+                            style="margin: 5px">
+                        <f:setPropertyActionListener value="#{tempera.temperaDevice}"
+                                                     target="#{temperaDeviceDetailController.temperaDevice}"/>
+                    </p:commandButton>
+                    <p:commandButton
+                            action="#{temperaDeviceDetailController.deleteTemperaDevice()}"
+                            icon="pi pi-trash"
+                            update="temperaForm"
+                            style="margin: 5px">
+                        <f:setPropertyActionListener value="#{tempera.temperaDevice}"
+                                                     target="#{temperaDeviceDetailController.temperaDevice}"/>
+                        <p:confirm header="Confirmation" message="This Tempera Device will be deleted permanently. You cannot undo this operation. Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+
+            <p:dialog id="temperaEditDialog" header="Edit Tempera Device" widgetVar="temperaEditDialog" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="true" closable="false">
+                <p:outputPanel id="temperaData"
+                               rendered="#{not empty temperaDeviceDetailController.temperaDevice}">
+                    <p:panelGrid columns="2">
+                        <p:outputLabel for="id" value="ID"/>
+                        <p:inputText id="id" value="#{temperaDeviceDetailController.temperaDevice.id}" disabled="true"/>
+                    </p:panelGrid>
+                    <p:separator/>
+                    <p:panelGrid columns="2">
+                        <p:outputLabel for="status" value="Status"/>
+<!--                        status can only be eddited if the device is registered-->
+                        <p:outputPanel rendered="#{temperaDeviceDetailController.temperaDevice.registered}">
+                            <p:selectOneMenu id="status" value="#{temperaDeviceDetailController.temperaDevice.status}">
+                                <f:selectItems value="#{deviceStatusListController.selectItemsDeviceStatusList}"/>
+                            </p:selectOneMenu>
+                        </p:outputPanel>
+<!--                        status cannot be eddited if the device is not registered-->
+                        <p:outputPanel rendered="#{!temperaDeviceDetailController.temperaDevice.registered}">
+                            <p:outputLabel for="status" value="#{temperaDeviceDetailController.temperaDevice.status}"/>
+                            <br/>
+                            <p style="color:Tomato;"> Tempera Device needs to be registered before editing status.</p>
+                            <p:commandButton
+                                    title="Setup and connect the Tempera Device to the network and turn it on. Click here to see the setup information."
+                                    action="/admin/accessPointConfig"
+                                    icon="pi pi-info-circle"/>
+                        </p:outputPanel>
+
+
+                    </p:panelGrid>
+                    <p:separator/>
+                    <p:panelGrid columns="2">
+                        <h:outputText value="Access Point"/>
+                        <p:selectOneMenu
+                                id="accesspointDropdown"
+                                filter="true"
+                                filterMatchMode="startsWith"
+                                converter="accessPointConverter"
+                                value="#{temperaDeviceDetailController.selectedAccessPoint}">
+                            <f:selectItems value="#{accessPointListController.selectItemsAccessPointList}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:separator/>
+                    <p:panelGrid columns="2">
+                        <h:outputText value="User"/>
+                        <p:selectOneMenu
+                                id="userDropdown"
+                                filter="true"
+                                filterMatchMode="startsWith"
+                                converter="userConverter"
+                                value="#{temperaDeviceDetailController.selectedUser}">
+                            <f:selectItems value="#{userListController.selectItemsUserListWithNullOption}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="2">
+                        <p:commandButton
+                                value="Save"
+                                action="#{temperaDeviceDetailController.saveTemperaDevice()}"
+                                icon="pi pi-save"
+                                oncomplete="PF('temperaEditDialog').hide()"
+                                update="temperaForm"/>
+                        <p:commandButton
+                                value="Abort"
+                                icon="pi pi-times"
+                                action="#{temperaDeviceDetailController.doResetTemperaDevice()}"
+                                oncomplete="PF('temperaEditDialog').hide()"
+                                update="temperaForm"
+                                immediate="true"
+                                resetValues="true"/>
+                    </p:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+
+        </h:form>
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,243 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{timeRecordListController.initForEmployee()}"/>
+    </f:metadata>
+
+    <head>
+        <link rel="stylesheet" type="text/css" href="custom.css"/>
+    </head>
+
+    <ui:define name="content">
+        <h:form id="mainForm" onkeypress="if (event.key === 'Enter') {return false;}">
+            <p:messages id="editMessage" for="editDialog start end split" showDetail="true" showSummary="false" closable="true" autoupdate="true"/>
+
+            <p:tabView dynamic="true" cache="true" effect="fold" id="tabView">
+
+                <p:tab title="Schedule">
+                    <p:outputPanel id="schedulePanel">
+                    <div class="card">
+                        <h:panelGrid columnClasses="value" style="width: 100%">
+                            <p:schedule id="schedule" value="#{timeRecordScheduleController.model}" widgetVar="schedule"
+                                        draggable="false" resizable="false" allDaySlot="false" view="timeGridWeek"
+                                        initialDate="#{timeRecordScheduleController.initialDate}" scrollTime="08:00:00"
+                                        aspectRatio="2.8" locale="de" slotLabelFormat="['HH:mm']">
+                                <p:ajax event="eventSelect" listener="#{timeRecordDetailController.onEventSelect}"
+                                        update="mainForm:editDialog" oncomplete="PF('editDialog').show();"/>
+                            </p:schedule>
+                        </h:panelGrid>
+                    </div>
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="List">
+                    <div class="card">
+                        <div class="card-header">
+                            <p:panelGrid columns="1" styleClass="card-header" columnClasses="vertical-align">
+                                <p:outputPanel id="totalDurationPanel">
+                                    <h5>
+                                        <h:outputText value="Total work time for filtered time records: #{timeRecordListController.totalDuration} min" style="font-weight: bold;"/>
+                                    </h5>
+                                </p:outputPanel>
+                                <h:panelGroup>
+                                    <h:outputText value="Click enter after filtering to recalculate the total work time based on the new filter criteria."
+                                                  style="color: #126198; font-weight: bold"/>
+                                    <br/>
+                                    <h:outputText value="To enable sorting by multiple columns, hold ctrl while you click on the sorting icon."
+                                                  style="color: #126198; font-weight: bold"/>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </div>
+                        <p:dataTable id="table" widgetVar="timeReckordTable" var="timeRecord"
+                                     value="#{timeRecordListController.timeRecords}"
+                                     filteredValue="#{timeRecordListController.filteredTimeRecords}"
+                                     reflow="true" styleClass="products-table" rowKey="#{timeRecord.id}"
+                                     paginator="true" sortMode="multiple"
+                                     rows="10" rowSelectMode="add" paginatorPosition="bottom">
+                            <p:ajax event="filter" listener="#{timeRecordListController.onFilter}"
+                                    update="mainForm:tabView:totalDurationPanel"/>
+
+                            <p:column headerText="Start" sortBy="#{timeRecord.startTime}"
+                                      filterBy="#{timeRecord.startTime}"
+                                      filterFunction="#{timeRecordListController.filterByDate}">
+                                <h:outputText value="#{timeRecord.startTime}">
+                                    <f:convertDateTime type="localDateTime" pattern="dd.MM.yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="End" sortBy="#{timeRecord.endTime}"
+                                      filterBy="#{timeRecord.endTime}"
+                                      filterFunction="#{timeRecordListController.filterByDate}">
+                                <h:outputText value="#{timeRecord.endTime}">
+                                    <f:convertDateTime type="localDateTime" pattern="dd.MM.yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Work Mode" sortBy="#{timeRecord.workMode}"
+                                      filterBy="#{timeRecord.workMode}">
+                                <h:outputText value="#{timeRecord.workMode}"/>
+                            </p:column>
+                            <p:column headerText="Project" sortBy="#{timeRecord.project.name}"
+                                      filterBy="#{timeRecord.project.name}">
+                                <h:outputText
+                                        value="#{timeRecord.workMode ne 'OUT_OF_OFFICE' ? timeRecord.project.name : ''}"/>
+                            </p:column>
+                            <p:column headerText="Work Group" sortBy="#{timeRecord.workGroup.name}"
+                                      filterBy="#{timeRecord.workGroup.name}">
+                                <h:outputText
+                                        value="#{timeRecord.workMode ne 'OUT_OF_OFFICE' ? timeRecord.workGroup.name : ''}"/>
+                            </p:column>
+                            <p:column headerText="Description" sortBy="#{timeRecord.description}"
+                                      filterBy="#{timeRecord.description}">
+                                <h:outputText
+                                        value="#{timeRecord.workMode ne 'OUT_OF_OFFICE' ? timeRecord.description : ''}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+
+                </p:tab>
+                <p:tab title="Your Cumulative Work Hours">
+                    <p:outputPanel id="chartPanel">
+                    <div class="grid">
+                        <div class="col-12 md:col-8">
+                            <div class="card">
+                                <p:messages id="chartMessage" for="chartPanel" forIgnores="editDialog" showDetail="true" showSummary="false" closable="true"/>
+                                <p:barChart type="bar" model="#{timeRecordChartController.barModel}" id="chart"
+                                            widgetVar="chart"/>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Settings for Chart</h5>
+                                </div>
+                                <p:outputLabel for="groupBy" value="Group time records by:"/>
+                                <p:selectOneListbox id="groupBy" value="#{timeRecordChartController.groupBy}">
+                                    <f:selectItem itemLabel="Project" itemValue="Project"/>
+                                    <f:selectItem itemLabel="Work Group" itemValue="Work Group"/>
+                                    <f:selectItem itemLabel="Work Mode" itemValue="Work Mode"/>
+                                </p:selectOneListbox>
+
+                                <p:separator/>
+
+                                <p:outputLabel for="range" value="Range:"/>
+                                <p:datePicker id="range" selectionMode="range"
+                                              value="#{timeRecordChartController.range}"
+                                              readonlyInput="true" pattern="dd.MM.yy"/>
+
+                                <p:separator/>
+
+
+                                <p:commandButton value="Submit"
+                                                 actionListener="#{timeRecordChartController.createChart()}"
+                                                 update="mainForm:tabView:chartPanel" icon="pi pi-check"/>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    </p:outputPanel>
+                </p:tab>
+
+            </p:tabView>
+
+
+            <p:dialog id="editDialog" widgetVar="editDialog" header="Edit Time Record" showEffect="fade" hideEffect="fade" resizable="true" closable="false">
+                <p:outputPanel id="editPanel">
+                <h:panelGrid id="selectedForEdit" columns="2"
+                             rendered="#{not empty timeRecordDetailController.selectedTimeRecord}">
+                    <p:outputLabel for="project" value="Project:"
+                                   rendered="#{timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE'}"/>
+                    <p:selectOneMenu id="project" value="#{timeRecordDetailController.selectedProject}"
+                                     rendered="#{timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE'}">
+                        <f:selectItems value="#{timeRecordDetailController.selectableProjectsAsString}"/>
+                        <p:ajax event="valueChange" listener="#{timeRecordDetailController.onProjectSelect}"
+                                update="selectedForEdit"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="workGroup" value="WorkGroup:"
+                                   rendered="#{(timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE')
+                                       and (timeRecordDetailController.selectedProject ne 'no project assigned')}"/>
+                    <p:selectOneMenu id="workGroup" value="#{timeRecordDetailController.selectedWorkGroup}"
+                                     rendered="#{(timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE')
+                                       and (timeRecordDetailController.selectedProject ne 'no project assigned')}">
+                        <f:selectItems value="#{timeRecordDetailController.selectableWorkGroupsAsString}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="description" value="Description:"
+                                   rendered="#{timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE'}"/>
+                    <p:inputText id="description" value="#{timeRecordDetailController.selectedDescription}"
+                                 rendered="#{timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE'}"
+                                 maxlength="150"/>
+
+                    <p:outputLabel for="workmode" value="Work Mode:"/>
+                    <p:selectOneMenu id="workmode" value="#{timeRecordDetailController.selectedWorkMode}"
+                                     rendered="#{not empty timeRecordDetailController.selectedTimeRecord}">
+                        <f:selectItems value="#{timeRecordDetailController.workModes}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="start" value="Start Time:"/>
+                    <p:datePicker id="start" value="#{timeRecordDetailController.selectedStartTime}"
+                                  required="true" requiredMessage="Start time must not be empty."
+                                  showTime="true"/>
+
+                    <p:outputLabel for="end" value="End Time:"
+                                   rendered="#{timeRecordDetailController.selectedTimeRecord.endTime ne null}"/>
+                    <p:datePicker id="end" value="#{timeRecordDetailController.selectedEndTime}" showTime="true"
+                                  required="true" requiredMessage="End time must not be empty."
+                                  rendered="#{timeRecordDetailController.selectedTimeRecord.endTime ne null}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2"
+                                 rendered="#{not empty timeRecordDetailController.selectedTimeRecord}">
+                    <p:commandButton id="saveButton" value="Save" icon="pi pi-save"
+                                     action="#{timeRecordDetailController.editTimeRecord()}"
+                                     oncomplete="PF('editDialog').hide();"
+                                     process="editPanel"
+                                     update="mainForm:tabView:schedulePanel mainForm:editMessage"/>
+                    <p:commandButton value="Abort"
+                                     icon="pi pi-times"
+                                     oncomplete="PF('editDialog').hide();"
+                                     update="editDialog"
+                                     immediate="true"
+                                     resetValues="true"/>
+                </h:panelGrid>
+                    </p:outputPanel>
+
+                    <p:separator/>
+
+                <p:outputPanel id="splitPanel">
+                    <h:panelGrid columns="2"
+                                 rendered="#{not empty timeRecordDetailController.selectedTimeRecord}">
+                    <p:outputLabel for="split" value="Split Time Record at:"/>
+                    <p:datePicker id="split" value="#{timeRecordDetailController.splitAt}" showTime="true"
+                                  required="true" requiredMessage="Split time must not be empty."/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2"
+                                 rendered="#{not empty timeRecordDetailController.selectedTimeRecord}">
+                    <p:commandButton id="splitButton" value="Split" icon="pi pi-copy"
+                                     action="#{timeRecordDetailController.splitTimeRecord()}"
+                                     oncomplete="PF('editDialog').hide();"
+                                     process="splitPanel"
+                                     update="mainForm:tabView:schedulePanel mainForm:editMessage"/>
+                        <p:commandButton value="Abort"
+                                         icon="pi pi-times"
+                                         oncomplete="PF('editDialog').hide();"
+                                         update="editDialog"
+                                         immediate="true"
+                                         resetValues="true"/>
+
+                </h:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

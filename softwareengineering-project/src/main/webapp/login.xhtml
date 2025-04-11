@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+
+
+    <ui:define name="content">
+        <div class="col-12" align="center">
+            <h:outputText value="Welcome to Tempera!" style="font-size: 36px; color: darkblue;"/>
+        </div>
+        <div class="col-12" align="center">
+            <p:card style="width: 25em; margin:50px" rendered="#{not sessionInfoBean.loggedIn}">
+                <form id="login_form" action="#{request.contextPath}/login" method="post">
+                    <p:staticMessage style="width: 100%" rendered="${!empty param['error']}" severity="error"
+                                     summary="ERROR" detail="Username or password invalid!"/>
+
+
+                    <h:outputText value="Login" styleClass="login-header" style="font-weight: bold; font-size: 24px;"/>
+                    <h:panelGrid columns="1" style="margin-top: 20px; width: 100%">
+                        <h:outputLabel for="username" value="Username:"/>
+                        <p:inputText id="username" type="text" required="true" style="width: 100%" maxlength="150"/>
+                        <h:outputLabel for="password" value="Password:"/>
+                        <p:inputText id="password" type="password" required="true" style="width: 100%" maxlength="150"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" style="
+                            width: 100%;
+                            text-align: center;
+                            align-self: center;">
+                        <button style=" background-color: black;width: 100%;" type="submit"
+                                class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                            <span class="ui-button-text">Login</span>
+                        </button>
+                        <div style="width: 100%">
+                        </div>
+                    </h:panelGrid>
+
+                </form>
+            </p:card>
+
+            <!-- error message if user is already logged in -->
+
+            <p:card style="width: 340px; margin:10px;" rendered="#{sessionInfoBean.loggedIn}">
+                <f:facet name="header">
+                    <img style="margin-bottom: 0; padding-bottom: 0" alt="user header"
+                         src="https://cdn.pixabay.com/photo/2017/02/12/21/29/false-2061131_960_720.png"/>
+                </f:facet>
+                <p style="padding-top: 0; margin-top: 0">error!</p>
+                <p>You are already logged in</p>
+
+                <h:panelGrid columns="1" style="
+                        width: 100%;
+                        text-align: right;
+                        align-self: center;">
+                    <p:button style="width: 100%;" value="Logout" href="/logout"
+                              class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                    </p:button>
+                </h:panelGrid>
+            </p:card>
+
+        </div>
+    </ui:define>
+
+</ui:composition>

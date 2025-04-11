@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+
+        <style>
+            code {
+                color:dimgrey;
+                font-style: italic;
+            }
+        </style>
+
+        <p:commandButton
+        value="Back"
+        action="/admin/tempera"
+        icon="pi pi-arrow-left"/>
+            
+        <p:outputLabel>
+            <h2></h2>
+            <h1>Directions for Tempera Device Setup</h1>
+            The setup instructions can also be found in hardware/temperaStation/notesTemperaStation.txt.
+
+            <h2>Access Point</h2>
+            To be able to connect the Tempera Device, you need to choose an Access Point where it shall 
+            send it's data to. This is already necessary for the setup, so that the Access Point can verify
+            the device. You will get a message once the registration process is complete.
+
+            <h2>Platform IO</h2>
+            Note: These directions are made for VS Code, if you use a different editor/program for flashing the 
+            Arduino the steps may change.<br/>
+            <br/>
+            First please install the "PlatformIO IDE" extension. (Extensions can be found on the left toolbar. The 
+            Exentsion button looks like 4  squares, where the upper right one has more distance than the other 3 from the center.)
+            After the installation is complete it will ask to restart VS code. Afterwards a new icon (an ant) should appear on the 
+            left toolbar. Now click this icon to open PlatformIO.<br/>
+            From here click "Open Folder" to open the existing project in folder "g4t2\hardware\temperaStation\src_arduino\nano".<a href="#git">[1]</a><br/>
+            Now the project should configure itself.
+
+            <h2>Configuration</h2>
+            You have to replace the TD-ID Number located at line 8 in the main.cpp file, which is located in the src folder. This ID has to
+            have a specific format: "group-TD-z", where group is replaced by your company shortcut or here per default with G4T2 and 
+            z is replaced with the ID of the Tempera Device given by the Web-App (example here: 1).<br/>
+            <code>8: char id[] = "G4T2-TD-1";</code> 
+
+            <h2>Upload</h2>
+            Now please first compile the code using the checkmark icon on the bottom toolbar, to see if everything is working properly. Then please also
+            select the Project Environment (bottom toolbar with folder icon) and selct <i>nano33ble</i>. Now you need to plug your Arduino into 
+            a com port (watch out not every USB port is a com port and not every USB cable is working!) to upload the code via the rightarrow symbol on the bottom toolbar. <br/>
+            A different approach is alos possible via: PROJECT TASK->nano33ble->General->Upload 
+
+            <h3>Registration</h3>
+            To register the newly set up device please assign it to an Access Point that is ENABLED and plug it in somewhere close to the selected
+            Acccess Point. Once the Access Point finds the newly registered Tempera Device it will contact the server and the device will be 
+            automatically registered. 
+            Until registration process is complete it is not allowed to change the device staus from NOT_REGISTERED. After
+            completion of the setup process (device status will be set to DISABLED and a message will be sent to all admins)
+            the device status is now changable.
+
+            <h2>Support</h2>
+            If you have troubles setting up your Tempera Device please you can look at the debug notes in hardware/temperaStation/notesTemperaStation.txt
+            or contact <i>jonas.bayer@student.uibk.ac.at</i>.
+            
+            <h4>Footnotes</h4>
+            <p id="git">[1] You need to have already downloaded the git repository (containing all the necessary files) onto your computer.</p>
+            <h2></h2>
+        </p:outputLabel>
+        
+        <p:commandButton
+            value="Back"
+            action="/admin/tempera"
+            icon="pi pi-arrow-left"/>
+        
+    </ui:define>
+</ui:composition>

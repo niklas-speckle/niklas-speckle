@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+    <ui:define name ="content">
+        <h:form>
+            <p:panel header="Security Test Page" >
+                <p>You can use the following buttons to test the security settings for specific user roles</p>
+                <p>If the currently logged on user does not have the denoted role, an AccessDeniedException is thrown.</p>
+                <h:panelGrid columns="4">
+                    <p:commandButton action="#{secTest.doEmployeeAction}" value="EMPLOYEE" update="okDialog"/>
+                    <p:commandButton action="#{secTest.doManagerAction}" value="MANAGER" update="okDialog"/>
+                    <p:commandButton action="#{secTest.doAdminAction}" value="ADMINISTRTOR" update="okDialog"/>
+                    <p:commandButton action="#{secTest.doGroupLeaderAction}" value="GROUP_LEADER" update="okDialog"/>
+                </h:panelGrid>
+            </p:panel>
+
+            <p:dialog id="okDialog" header="Success!" widgetVar="okDialog" width="400" minHeight="100" visible="#{secTest.showOkDialog}">
+                <p>You could successfully call the action <strong>#{secTest.performedAction}</strong>.</p>
+                <p:commandButton value="Close" action="#{secTest.doHideOkDialog}" update="okDialog"/>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

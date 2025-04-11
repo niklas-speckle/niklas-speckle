@@ -1,0 +1,4 @@
+Here log files for standard usage as well as the error log of the terminal are created!
+
+If FileNotFound error occurs, please create the requested file from here on out they'll be created automatically!
+Sorry for the inconvenience

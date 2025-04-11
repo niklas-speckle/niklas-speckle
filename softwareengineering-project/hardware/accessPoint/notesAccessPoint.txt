@@ -1,0 +1,115 @@
+## Setup - Notes ##
+
+install pyyamly, requests, bleak, schedule
+
+before executing the shell program auto.sh make sure the file is written in Linux. If you copy it from a
+Windows machine you can either replace the linebreaks (Windows -> Linux) or generate the file new and retype
+the lines written in the file.
+( you can check with 
+cat -A shell/auto.sh
+if the character ^M is written at the end of each line if yes then it still has Windows ending
+-> please execute:
+sed -i -e 's/\r$//' shell/auto.sh
+to replace the thw Windows ending to Linux ending)
+
+make shell program executable with
+sudo chmod u+x  /home/pi/accessPoint/shell/auto.sh
+--- this is the only command allowed to be called with sudo!
+- if you call auto in console with sudo, autostart can stop working from that so please don't do it!
+- (this is because log files may be generated with admin rights, which then are not accessible for pi user)
+
+
+When operating on Raspberry don't forget to change the CONFIG_PATH (filep of conf.yaml)
+in log_service to:
+"config_files/conf.yaml"
+
+As well as adding the IP Address instead of the localhost for rest connecton (config_file)
+ip_server = "192.168.0.73"
+and changing the adress of the log_files in conf.yaml to
+"python/log/log_files/"
+
+Add to crontab:
+Open crontab with "crontab -e" (select nano if the terminal asks which editor to use)
+Then write the following line into the file (before exit 0):
+@reboot /home/pi/accessPoint/shell/auto.sh
+Then save the file via "ctrl + O" and enter. Then exit nano via "Ctrl + X"
+
+
+
+## Debug - Notes ##
+
+if ssh cannot be connected (but ping still works) refer to tutorial:
+https://petertran.com.au/2018/06/06/bad-owner-permissions-ssh-config/
+
+Important: if there are updates to the database_service (change of database colums) 
+- the database has to be deleted for the update to work!
+
+To check if autostart woked you can find auto.log in shell folder, which states is auto.sh was started and if it ended unexpectedly
+(if starting of python had issues).
+In log/logfiles the startup of the programm should also be logged.
+Otherwise you can check with
+ps -x 
+to see if the python and auto.sh processes are running
+
+If autostart or calling shell script is not working anymore please try making the shell script auto.sh executable.
+If this doesen't solve the problem then you may have tried executing the file with sudo. You can delete auto.log, error.log and the log
+file of today and then try again.
+If the error says something about ^M in the error message, then the auto.sh file has Windows linebreaks as of right now, which are not 
+working in Linux. Try substituting it via
+sed -i -e 's/\r$//' shell/auto.sh
+
+-- command to check for WIndows ending and to change it from: https://askubuntu.com/questions/304999/not-able-to-execute-a-sh-file-bin-bashm-bad-interpreter
+
+or copy the insides of the file into an editor and delete the file, then create it again in Linux (directly on the raspberry) and insert 
+(better just type it new) into the newly generated file.
+
+If f-string error occurs please check if entered Time-Formats (in conf.yaml) are written inside ' and not ". This should fix the issue.
+
+
+## Log Files ##
+There are 3 relevant log files on the Access Point:
+
+- shell/auto.log:
+    this log file records the autostart if it happend, when it happened and if the process stopped unexpectedly
+    since the python main should be an endless loop.
+
+- python/log/log_files/error.log:
+    this log contains the current stderr, where the python main is executed. So if the process stopped unexpectedly
+    you can find the error message there.
+
+- python/log/log/files/G4T2-AP-1_2024-05-23.log:
+    this is just an example name for the file. The filename will always contain the string id of the AP as well as the current date.
+    In thi file all the logging during the process of the python main will be logged. as in Connections to TD or server, deletion of 
+    elements from databese etc. are logged. These files will be deleted after a certain period of time (can be set in conf.yaml).
+
+
+## Bluetooth Upgrade ##
+
+The credit for the installation guide of BlueZ 5.66gies to Andrea Mussmann.
+
+First install the build-in tool via:
+sudo apt install libglib2.0-dev libdbus-1-dev libudev-dev libical-dev libreadline-dev
+
+Now download the BlueZ source code and store it in a suitable directory.
+wget http://www.kernel.org/pub/linux/bluetooth/bluez-5.66.tar.xz
+
+Now extract the files and put it into your directory.
+tar -xf bluez-5.66.tar.xz && cd bluez-5.66
+
+Configure BlueZ via:
+./configure --prefix=/usr --mandir=/usr/share/man --sysconfdir=/etc --localstatedir=/var
+
+And build it:
+make
+sudo make install
+
+Now check the BlueZ installation. The two following commands have to return the same version!
+/usr/libexec/bluetooth/bluetoothd --version
+bluetoothd --version
+
+Now restart bluetooth
+sudo systemctl restart bluetooth
+
+If you additionally want to check if bluetooth-service is active and if the right version (5.66) is runncing you can run the following command:
+sudo systemctl status bluetooth
+Sometimes you have to press enter to see the full result of the test.

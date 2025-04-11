@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{userDetailController.setUser(sessionInfoBean.currentUser)}"/>
+    </f:metadata>
+
+
+    <ui:define name="content">
+        <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+        <div class="layout-dashboard">
+            <div class="grid">
+                <div class="col-12">
+                    <div class="card  overview-box" align="center">
+                        <h3>Your Account</h3>
+                    </div>
+                </div>
+
+
+                <!-- ................ EDIT FIELDS............-->
+                <div class="col-12 md:col-6">
+
+                    <div class="card ">
+                        <h:form id="fieldsForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                            <p:outputPanel id="userData1" rendered="#{not empty userDetailController.user}">
+                                <div class="card-header">
+                                    <h5 class="mt-0">Edit Profile </h5>
+                                </div>
+                                <div>
+                                    <h:panelGrid columns="2">
+                                        <p:outputLabel for="project" value="Default Project for Time Records: "/>
+                                        <p:selectOneMenu id="project"
+                                                         value="#{userDetailController.user.defaultProject}"
+                                                         converter="projectConverter">
+                                            <f:selectItems value="#{userDetailController.projectsForUser}"/>
+                                            <f:selectItem itemLabel="None" itemValue="#{null}"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel for="visibility" value="Visibility of your Work Mode:"/>
+                                        <p:selectOneMenu id="visibility"
+                                        value="#{userDetailController.user.workModeVisibility}"
+                                        disabled="#{sessionInfoBean.hasRole('ADMINISTRATOR')}">
+                                            <f:selectItems value="#{userDetailController.workModeVisibilities}"/>
+                                        </p:selectOneMenu>
+                                    </h:panelGrid>
+                                </div>
+                                <p:separator/>
+                                <div>
+                                    <h:panelGrid columns="2">
+                                        <p:outputLabel for="username" value="Username: "/>
+                                        <p:inputText disabled="#{true}" id="username"
+                                                     value="#{userDetailController.user.username}"/>
+                                        <p:outputLabel for="firstName" value="First Name: "/>
+                                        <p:inputText id="firstName"
+                                                     value="#{userDetailController.user.firstName}"
+                                                     maxlength="150"/>
+                                        <p:outputLabel for="lastName" value="Last Name: "/>
+                                        <p:inputText id="lastName"
+                                                     value="#{userDetailController.user.lastName}"
+                                                     maxlength="150"/>
+                                        <p:outputLabel for="email" value="E-Mail: "/>
+                                        <p:inputText id="email" value="#{userDetailController.user.email}" maxlength="150"/>
+                                        <p:outputLabel for="phone" value="Phone: "/>
+                                        <p:inputText id="phone" value="#{userDetailController.user.phone}" maxlength="150"/>
+                                        <!-- ................ SAVE BUTTON ............-->
+                                        <p:commandButton value="Save"
+                                                         icon="pi pi-save"
+                                                         action="#{userDetailController.doSaveUser()}"
+                                                         update=":msg, :fieldsForm:userData1"/>
+                                    </h:panelGrid>
+                                </div>
+                            </p:outputPanel>
+                        </h:form>
+                    </div>
+                </div>
+
+                <p:separator/>
+
+                <!-- ................ EDIT PASSWORD............-->
+                <div class="col-12 md:col-6">
+                    <div class="card">
+                        <h:form id="passwordForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                            <div class="card-header">
+                                <h5 class="mt-0">Password</h5>
+                            </div>
+                            <div class="field grid">
+                                <p:outputLabel for="pwd1" styleClass="col-fixed" style="width:100px"
+                                               value="Enter new password"/>
+                                <div class="col">
+                                    <p:password id="pwd1" value="#{userDetailController.newPassword}"
+                                                match="pwd2"
+                                                label="Password 1" required="true" feedback="true"
+                                                toggleMask="true"
+                                                redisplay="true"/>
+                                </div>
+                            </div>
+
+                            <div class="field grid">
+                                <p:outputLabel for="pwd2" styleClass="col-fixed" style="width:100px"
+                                               value="Repeat new password"/>
+                                <div class="col">
+                                    <p:password id="pwd2" value="#{userDetailController.newPassword}"
+                                                label="Password 2" required="true" feedback="true"
+                                                toggleMask="true"
+                                                redisplay="true"/>
+                                </div>
+                            </div>
+                            <p:commandButton value="Change password"
+                                             action="#{userDetailController.doChangePassword()}"
+                                             update=":msg"/>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>

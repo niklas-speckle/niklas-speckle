@@ -1,0 +1,63 @@
+## Setup - Notes ##
+
+Setup the Computer to flash Arduino: 
+
+Install VS Code for your OS: https://code.visualstudio.com/docs/setup/windows
+
+Install PlatformIO IDE Extension for VS Code:
+
+Open Extensions View:
+
+In VS Code, click on the Extensions icon on the sidebar or press Ctrl+Shift+X (Windows/Linux) or Cmd+Shift+X (macOS).
+Search for PlatformIO IDE:
+
+In the Extensions view, type "PlatformIO IDE" in the search bar.
+Install PlatformIO IDE:
+
+Click the Install button next to the PlatformIO IDE extension.
+
+Clone the Git responsetory in your prefered Diretory:
+
+https: https://git.uibk.ac.at/informatik/qe/swess24/group4/g4t2.git
+ssh: git@git.uibk.ac.at:informatik/qe/swess24/group4/g4t2.git
+
+Open the PlatformIO IDE Extension in VS Code:
+
+Select "Pick a folder" to open an existing Project. 
+
+Select the following sub folder from the cloned responsetory: 
+
+g4t2\hardware\temperaStation\src_arduino\nano
+
+Replace the TD-ID Number located at line 8 in the "main.cpp" file, which is located in the "src" folder.
+
+The ID needs to have this type: "group-TD-z"
+
+group is replaced by your company shortcut or here per default with G4T2
+z is replaced with the ID of the TD given by the web-App for example: 1 
+
+example -> line 8: char id[] = "G4T2-TD-1";
+
+Click on the PlatformIO Extension symbol:
+
+PROJECT TASK->nano33ble->General->Upload 
+
+or: select environment (nano33ble) in bottom toolbar (symbol with folder icon - PlatformIO project environment) and then upload
+    via the rightarrow on bottom toolbar.
+
+Don't forget to plug your Arduino in a com USB port before trying to upload (watch out not every usb cable is working for upload)
+
+For Debugging: 
+
+Etablish a Serial connection between your Computer and the TD with an USB-Kabel. 
+Its important to checkt that the cabel is able to transmit data and not only Voltage.
+
+Read the Data from the serial connection with the help of the inbuild Serial Monitor from PlatformIO:
+ Therefore open a Terminal in VS Code and select in the top row Serial Monitor.
+
+As an alternative you can use Putty to read and write Serial data: https://www.putty.org/
+
+
+
+
+

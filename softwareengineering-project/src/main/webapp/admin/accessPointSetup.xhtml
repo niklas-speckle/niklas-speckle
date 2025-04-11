@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+
+        <style>
+            code {
+                color:dimgrey;
+                font-style: italic;
+            }
+        </style>
+
+        <p:commandButton
+        value="Back"
+        action="/admin/accessPoints"
+        icon="pi pi-arrow-left"/>
+            
+        <p:outputLabel>
+            <h2></h2>
+            <h1>Directions for Access Point Setup</h1>
+            The setup instructions can also be found in hardware/accessPoint/notesAccessPoint.txt.
+            <h2>Operating System</h2>
+            Before getting started with adding the program specific files, please make sure that the operating system for your Raspberry
+            Pi is already installed.
+            <br/>
+            <!--(link to https://www.raspberrypi.com/software/ ?) -->
+
+            <h2>bootfs</h2>
+            In the next step please connect the SD card to your computer. Open the bootfs drive and create a file "ssh" without an ending!
+            After that please insert the file "wpa_supplicant.conf", where you have to add the ssid, as well as the password of your Wifi.
+            <br/> <br/>
+            
+            <code>
+                # wpa_supplicant.conf <br/>
+                ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev <br/>
+                update_config=1 <br/>
+                country=AT <br/>
+                <br/>
+                network={ <br/>
+                    &#9; ssid="myssid" <br/>
+                    &#9; psk="pypassword" <br/>
+                } <br/>
+            </code>
+
+            <h2>SSH Connection</h2>
+            Note: These are directions made for VS Code. If you use a different Editor these steps may change a little. <br/>
+            <br/>
+            First install the "Remote - SSH" Extension if it isn't already installed. Now press F1 and select "Remote-SSH: Connect Current Window to Host...".
+            Then enter <code>user@hostname</code> (where user is the user set on the raspberry - normally pi, and hostname is the name set for the Raspberry Pi) and press Enter.
+            When first connecting a device the window will ask for the operating system, so please select the right one (should be Linux).  Afterward you have to enter
+            the password for the user. Now you should be able to access all files and directories on the Raspberry Pi. Please open folder /home/pi, which will be needed for the 
+            next steps. The window will probably ask for you to reenter the password.<br/>
+            For the connection to work, the Raspberry Pi has to be powered on properly and it sometimes takes a while untill the connection can be established.
+
+            <h2>Installation</h2>
+            To let the program run smoothly there are a few packages/programs that have to be installed.
+            <ul>
+                <li>
+                    First install the python plugin on VS Code (for the device via SSH) if it hasn't been installed yet.
+                </li>
+                <li>
+                    Next please check your python version via the command <code>python --version</code>. This version should be at least 3.9 to let "bleak" run properly.
+                    If the version is older please update the version.
+                </li>
+                <li>
+                    Make sure that "pip" the python package installer is installed by running <code>pip --version</code>
+                </li>
+                <li>
+                    Now please install the following packages via <code>pip install</code>: pyyaml, bleak, requests, schedule
+                </li>
+                <li>
+                    Last but nut least please check your bluetooth via <code>bluetoothd --version</code>. If this version is lower than 5.66 please update the bluetooth
+                    on your device using the instructions here:
+                </li>
+            </ul>
+            <p:commandButton
+                value="Bluetooth Upgrade Instructions"
+                action="/admin/accessPointBluetooth"
+                icon="pi pi-info-circle"/>
+         
+            
+            <h2>Configuration</h2>
+            <h3>Copy Files</h3>
+            First of all please copy the folder "accessPoint", which can be found in /hardware/accessPoint from the local repository to /home/pi on the Raspberry Pi.
+            Please check here if accessPoint/shell/auto.sh has the right format via<br/>
+            <code>cat -A accessPoint/shell/auto.sh</code>.<a href="#windowsToLInux">[1]</a><br/>
+             If you can see <i>^H</i> at the end of lines, then the file has the wron linebreaks (Windows instead of Linux). You can change it by typing the command <br/>
+            <code>sed -i -e 's/\r$//' accessPoint/shell/auto.sh</code><a href="#windowsToLInux">[1]</a> <br/>
+            into the console to change the format from Widows format to Linux format.
+            
+            <h3>Crontab</h3>
+            To let the program run at autostart, we need to add a crontab. Therefore please open a terminal. now type the command <br/>
+            <code>crontab -e</code> <br/>
+            to edit crontab for this user. When doing this the first time the terminal may ask you which editor to use - we recommend to use "nano". After all the comments
+            add the following line to the file: <br/>
+            <code>@reboot /home/pi/accessPoint/shell/auto.sh</code> <br/>
+            Now press Ctrl + O and Enter to save it. Afterwards you can exit the editor via Ctrl + X. Now the programm is linked to autostart.
+            
+            <h3>Executeable</h3>
+            To make the shell program auto.sh, which is used for autostart, executable please run the command <br/>
+            <code>chmod u+x  /home/pi/accesssPoint/shell/auto.sh</code> <br/>
+            in the terminal. Otherwise the program will end in an Error on startup.
+            <i>INFO: please only use sudo here and never try to execute other files with sudo. This could lead to problems at startup later.</i>
+            
+            <h3>conf.yaml <p:commandButton
+                title="More Information"
+                action="/admin/accessPointConfig"
+                icon="pi pi-info-circle"/></h3>
+            Now let's adjust the "conf.yaml" file in folder accessPoint/config_files/conf.yaml. Most of this file can be left untouced. 
+            <ul>
+                <li>
+                    The first thing that we need to change is <code>id_accesspoint</code>, which has to be changed to the id displayed, when creating the Accesspoint. 
+                    The example in the code snipped below is id <code>1</code>.
+                </li>
+                <li>
+                    And the second one is <code>ip_server</code>. Here we have to enter the ip adress our server is linked with, e.g. <code>192.168.0.94</code>.
+                </li>
+                <li>
+                    The last one is <code>log_files_filepath</code>. Here we need to remove <code>hardware/accessPoint/</code> for the script to find the path correctly. If you
+                    want you can also enter a completely different path just make sure that the directory exists.
+                </li>
+            </ul>
+               Everything else can be left untouched. If you want you can change something else of the configuration you can use the <i>More Information</i> button
+               next to <i>conf.yaml</i> to get to the more detailed configuration page.
+            <br/> <br/>
+            <code>
+                #conf.yaml <br/>
+                group: G4T2 <br/>
+                id_accesspoint: 1 <br/>
+                ip_server: localhost <br/>
+                <br/>
+                log_files_filepath: "hardware/accessPoint/python/log/log_files/" <br/>
+                log_file_deletion_period: 14 #days <br/>
+                <br/>
+                connection_intervall: 60 #seconds <br/>
+                connection_factor_rest: 5 #factor longer than connection_interval (for ble) (has to be integer) <br/>
+                <br/>
+                time_conversion_server: "%Y-%m-%dT%H:%M:%S" <br/>
+                time_conversion_ap_tempera_devices: "%Y-%m-%d %H:%M:%S" <br/>
+                <br/>
+                post_address_http: "http://" <br/>
+                post_address_port: ":8080/api/" <br/>
+                rest_measurement_address: "measurements/" <br/>
+                rest_time_record_address: "timerecords/" <br/>
+                rest_message_address: "messages/" <br/>
+                rest_get_address: "temperaDevices/" <br/>
+                <br/>
+                tempera_status_enabled: ENABLED <br/>
+                tempera_status_disabled: DISABLED <br/>
+                tempera_status_not_registered: NOT_REGISTERED <br/>
+                <br/>
+                tempera_list_update_created: CREATED <br/>
+                tempera_list_update_updated: UPDATED <br/>
+                tempera_list_update_deleted: DELETED <br/>
+                <br/>
+                work_mode_available: AVAILABLE <br/>
+                work_mode_meeting: MEETING <br/>
+                work_mode_deep_work: DEEP_WORK <br/>
+                work_mode_out_of_office: OUT_OF_OFFICE <br/>
+
+            </code>
+
+            <h3>Change File Directory</h3>
+            There is one filepath that has to be changed manually: <code>CONFIG_PATH</code> in "log_service".
+            This has to be changed to <code>"config_files/conf.yaml"</code>. 
+
+            <h3>Registration</h3>
+            To register the newly set up device just start the program (or restart the Access Point) so that it can contact the 
+            backend. Once the first http request from the newly registered device reached the server, the device will be 
+            automatically registered. 
+            Until registration process is complete it is not allowed to change the device staus from NOT_REGISTERED. After
+            completion of the setup process (device status will be set to DISABLED and a message will be sent to all admins)
+            the device status is changable.
+
+            <h2>Support</h2>
+            If you have troubles setting up your Access Point please contact <i>astrid.reisinger@student.uibk.ac.at</i> or look
+            at the debug notes in hardware/accessPoint/notesAccessPoint.txt as well as the log-files.
+
+            <h4>Log-Files</h4>
+            There are 3 types of Log-Files that can help with debugging:
+            <ul>
+                <li>
+                    The standard log-file can be found in python/log/log_files or in the folder you configured 
+                    it to be. This log file contains the standard pyhton logs.
+                </li>
+                <li>
+                    <i>auto.log:</i> This file contains information in when the Program was started and if it finished unexpectedly.
+                    One can find it in the folder <i>shell</i>.
+                </li>
+                <li>
+                    <i>error.log:</i> If the program finished unexpectedly the eroor message that would normally be displayed in the 
+                    console is saved in this file. One can find it in the folder <i>shell</i>.
+                </li>
+            </ul>
+
+
+            <h4>Footnotes</h4>
+            <p id="windowsToLInux">[1] These commands are taken from: https://askubuntu.com/questions/304999/not-able-to-execute-a-sh-file-bin-bashm-bad-interpreter</p>
+            <h2></h2>
+        </p:outputLabel>
+        
+        <p:commandButton
+            value="Back"
+            action="/admin/accessPoints"
+            icon="pi pi-arrow-left"/>
+        
+    </ui:define>
+</ui:composition>

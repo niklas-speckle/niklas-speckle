@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{userListController.init()}"/>
+    </f:metadata>
+
+    <ui:define name="content">
+        <h:form id="userForm" onkeypress="if (event.key === 'Enter') {return false;}">
+            <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+            <p:commandButton
+                    value="Create New User"
+                    action="#{userDetailController.doCreateUser}"
+                    oncomplete="PF('userCreateDialog').show()"
+                    update=":userCreateDialog"
+                    icon="pi pi-user-plus">
+            </p:commandButton>
+            <div class="card-header" style="margin-top: 10px">
+                <h:outputText value="To enable sorting by multiple columns, hold ctrl while you click on the sorting icon."
+                              style="color: #126198; font-weight: bold"/>
+            </div>
+            <p:dataTable id="usersTable" var="user" value="#{userListController.users}" reflow="true">
+                <p:column headerText="Username" sortBy="#{user.username}" filterBy="#{user.username}" filterMatchMode="contains">
+                    <h:outputText value="#{user.username}"/>
+                </p:column>
+                <p:column headerText="First Name" sortBy="#{user.firstName}" filterBy="#{user.firstName}" filterMatchMode="contains">
+                    <h:outputText value="#{user.firstName}"/>
+                </p:column>
+                <p:column headerText="Last Name" sortBy="#{user.lastName}" filterBy="#{user.lastName}" filterMatchMode="contains">
+                    <h:outputText value="#{user.lastName}"/>
+                </p:column>
+                <p:column headerText="Roles" filterBy="#{user.roles}" filterMatchMode="contains">
+                    <h:outputText value="#{user.roles}"/>
+                </p:column>
+                <p:column headerText="Enabled" sortBy="#{user.enabled}" filterBy="#{user.enabled}" filterValue="true" filterMatchMode="contains">
+                    <h:outputText value="#{user.enabled}"/>
+                </p:column>
+                <p:column style="width:100px;text-align: center" headerText="Actions">
+                    <p:commandButton update="userEditDialog" oncomplete="PF('userEditDialog').show()"
+                                     icon="pi pi-user-edit" title="Edit" rendered="#{!sessionInfoBean.currentUser.equals(user) and user.enabled}"
+                                     style="margin: 5px">
+                        <f:setPropertyActionListener value="#{user}" target="#{userDetailController.user}"/>
+                    </p:commandButton>
+                    <p:commandButton action="#{userDetailController.doDeleteUser}" icon="pi pi-trash" title="Delete"
+                                     update=":userForm:usersTable" rendered="#{!sessionInfoBean.currentUser.equals(user) and user.enabled}"
+                                     style="margin: 5px">
+                        <f:setPropertyActionListener value="#{user}" target="#{userDetailController.user}"/>
+                        <p:confirm header="Confirmation"
+                                   message="The user will be disabled and all user roles will be withdrawn. You cannot undo this operation. Are you sure you want to proceed?"
+                                   icon="ui-icon-alert"/>
+                    </p:commandButton>
+                    <p:button outcome="/secured/userProfile.xhtml" icon="pi pi-user-edit" title="Edit" rendered="#{sessionInfoBean.currentUser.equals(user)}"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog header="Edit User" id="userEditDialog" widgetVar="userEditDialog" modal="true" showEffect="fade"
+                  hideEffect="fade" resizable="true" closable="false">
+            <h:form id="editForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                <p:outputPanel id="userData" rendered="#{not empty userDetailController.user}">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="username" value="Username: "/>
+                        <p:inputText id="username" value="#{userDetailController.user.username}" disabled="true"/>
+                        <p:outputLabel for="password" value="Password: "/>
+                        <p:password id="password" value="#{userDetailController.user.password}" disabled="true"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="firstName" value="First Name: "/>
+                        <p:inputText id="firstName" value="#{userDetailController.user.firstName}" maxlength="150" required="true" requiredMessage="First name must not be empty."/>
+                        <p:outputLabel for="lastName" value="Last Name: "/>
+                        <p:inputText id="lastName" value="#{userDetailController.user.lastName}" maxlength="150" required="true" requiredMessage="Last name must not be empty."/>
+                        <p:outputLabel for="email" value="E-Mail: "/>
+                        <p:inputText id="email" value="#{userDetailController.user.email}" maxlength="150"/>
+                        <p:outputLabel for="phone" value="Phone: "/>
+                        <p:inputMask id="phone" value="#{userDetailController.user.phone}" mask="+99? 999 9999999"/>
+                        <p:outputLabel for="roles" value="Roles: "/>
+                        <p:selectManyCheckbox id="roles" value="#{userDetailController.selectedRoles}"
+                                              layout="lineDirection">
+                            <f:selectItems value="#{userxRolesListController.allUserRoles}"/>
+                        </p:selectManyCheckbox>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:messages id="editMsg" widgetVar="editMsg" showDetail="true" showSummary="false" autoUpdate="false" closable="true"/>
+                    <h:panelGrid columns="3">
+                        <p:commandButton value="Save"
+                                         icon="pi pi-save"
+                                         action="#{userDetailController.doSaveUser}"
+                                         oncomplete="if (!args.validationFailed) { PF('userEditDialog').hide(); }"
+                                         update=":editForm:editMsg"/>
+                        <p:commandButton value="Abort"
+                                         icon="pi pi-times"
+                                         onclick="PF('userEditDialog').hide()"
+                                         action="#{userDetailController.doResetUser()}"
+                                         immediate="true"
+                                         resetValues="true"
+                                         update=":editForm, :editForm:editMsg">
+                        <p:resetInput target=":editForm" />
+                        </p:commandButton>
+                    </h:panelGrid>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Create New User" id="userCreateDialog" widgetVar="userCreateDialog" modal="true"
+                  showEffect="fade" hideEffect="fade" resizable="true" closable="false">
+            <h:form id="createForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                <p:outputPanel id="newUserData" rendered="#{not empty userDetailController.user}">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="newUsername" value="Username: "/>
+                        <p:inputText id="newUsername" value="#{userDetailController.user.username}" maxlength="150" required="true" requiredMessage="Username must not be empty."/>
+                        <p:outputLabel for="newPassword" value="Password: "/>
+                        <p:password id="newPassword" value="#{userDetailController.user.password}" maxlength="150" required="true" requiredMessage="Password must not be empty."/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="newFirstName" value="First Name: "/>
+                        <p:inputText id="newFirstName" value="#{userDetailController.user.firstName}" maxlength="150" required="true" requiredMessage="First name must not be empty."/>
+                        <p:outputLabel for="newLastName" value="Last Name: "/>
+                        <p:inputText id="newLastName" value="#{userDetailController.user.lastName}" maxlength="150" required="true" requiredMessage="Last name must not be empty."/>
+                        <p:outputLabel for="newEmail" value="E-Mail: "/>
+                        <p:inputText id="newEmail" value="#{userDetailController.user.email}" maxlength="150"/>
+                        <p:outputLabel for="newPhone" value="Phone: "/>
+                        <p:inputMask id="newPhone" value="#{userDetailController.user.phone}" mask="+99? 999 9999999"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:messages id="createMsg" widgetVar="createMsg" showDetail="true" showSummary="false" autoUpdate="false" closable="true"/>
+                    <h:panelGrid columns="3">
+                        <p:commandButton value="Save"
+                                         icon="pi pi-save"
+                                         action="#{userDetailController.doSaveUser}"
+                                         oncomplete="if (!args.validationFailed) { PF('userCreateDialog').hide(); }"
+                                         update=":createForm:createMsg"/>
+                        <p:commandButton
+                                value="Abort"
+                                icon="pi pi-times"
+                                action="#{userDetailController.doResetUser()}"
+                                onclick="PF('userCreateDialog').hide()"
+                                immediate="true">
+                            <p:resetInput target=":editForm" />
+                        </p:commandButton>
+                    </h:panelGrid>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" width="300">
+            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+        </p:confirmDialog>
+    </ui:define>
+</ui:composition>

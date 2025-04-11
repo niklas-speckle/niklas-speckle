@@ -1,0 +1,66 @@
+#include "ArduinoBLE.h"
+
+BLEService deviceInformationService("180A");
+BLEStringCharacteristic manufactNameChar("2A29", // standardised, see assigned numbers
+  BLERead, 64); // standardised as well, see Service documentation
+
+
+void blePeripheralConnectHandler(BLEDevice central);
+void blePeripheralDisconnectHandler(BLEDevice central);
+
+void setup() {
+  // generic BLE code taken from diverse ArduinoBLE examples
+  Serial.begin(9600); // initialise serial communication
+  while (!Serial);
+
+  // begin initialisation
+  if (!BLE.begin()) {
+    Serial.println("Starting BLE failed!");
+
+    while(1);
+  }
+  
+  /* Set a local name for the Bluetooth® Low Energy device
+     This name will appear in advertising packets
+     and can be used by remote devices to identify this Bluetooth® Low Energy device
+     The name can be changed but maybe be truncated based on space left in advertisement packet
+  */
+  BLE.setLocalName("TemperaStation GxTy"); // advertised name
+  BLE.setDeviceName("TemperaStation GxTy"); // name of device (in Generic Access 1800)
+  BLE.setAdvertisedService(deviceInformationService); // add the service UUID
+
+  BLEDescriptor deviceInfoDescriptor("2901", "Name of Team");
+  manufactNameChar.addDescriptor(deviceInfoDescriptor);
+  manufactNameChar.writeValue("GxTy"); // set initial value for this characteristic
+  deviceInformationService.addCharacteristic(manufactNameChar); // add the battery level characteristic
+  BLE.addService(deviceInformationService); // Add the battery service
+
+  // assign event handlers for connected, disconnected to peripheral (CallbackLED example)
+  BLE.setEventHandler(BLEConnected, blePeripheralConnectHandler);
+  BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
+  
+  /* Start advertising Bluetooth® Low Energy.  It will start continuously transmitting Bluetooth® Low Energy
+     advertising packets and will be visible to remote Bluetooth® Low Energy central devices
+     until it receives a new connection */
+  BLE.advertise();
+
+  Serial.println("Bluetooth® device active, waiting for connections...");
+}
+
+void loop() {
+  // partly taken from diverse ArduinoBLE examples
+  BLE.poll();
+}
+
+/* Handler code taken from CallbackLED Example */
+void blePeripheralConnectHandler(BLEDevice central) {
+  // central connected event handler
+  Serial.print("Connected event, central: ");
+  Serial.println(central.address());
+}
+
+void blePeripheralDisconnectHandler(BLEDevice central) {
+  // central disconnected event handler
+  Serial.print("Disconnected event, central: ");
+  Serial.println(central.address());
+}

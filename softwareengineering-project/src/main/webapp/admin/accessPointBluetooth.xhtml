@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+
+        <style>
+            code {
+                color:dimgrey;
+                font-style: italic;
+            }
+        </style>
+
+        <p:commandButton
+        value="Back"
+        action="/admin/accessPointSetup"
+        icon="pi pi-arrow-left"/>
+            
+        <p:outputLabel>
+            <h2></h2>
+            <h1>Directions for Bluetooth Upgrade</h1>
+            The credit for the installation guide of BlueZ 5.66gies to Andrea Mussmann.
+
+            <ul>
+                <li>
+                    First install the build-in tool via: <br/>
+                    <code> sudo apt install libglib2.0-dev libdbus-1-dev libudev-dev libical-dev libreadline-dev</code>
+                </li>
+                <li>
+                    Now download the BlueZ source code and store it in a suitable directory. <br/>
+                    <code>wget http://www.kernel.org/pub/linux/bluetooth/bluez-5.66.tar.xz</code>
+                </li>
+                <li>
+                    Now extract the files and put it into your directory.<br/>
+                    <code>tar -xf bluez-5.66.tar.xz &amp;&amp; cd bluez-5.66</code>
+                </li>
+                <li>
+                    Configure BlueZ via:<br/>
+                    <code>./configure --prefix=/usr --mandir=/usr/share/man --sysconfdir=/etc --localstatedir=/var</code>
+                </li>
+                <li>
+                    And build it:<br/>
+                    <code> make <br/>
+                        sudo make install</code>
+                </li>
+                <li>
+                    Now check the BlueZ installation. The two following commands have to return the same version! <br/>
+                    <code>/usr/libexec/bluetooth/bluetoothd --version<br/>
+                    bluetoothd --version</code>
+                </li>
+                <li>
+                    Now restart bluetooth <br/>
+                    <code>sudo systemctl restart bluetooth</code>
+                </li>
+                <li>
+                    If you additionally want to check if bluetooth-service is active and if the right version (5.66) is runncing you can run
+                    the following command: <br/>
+                    <code>sudo systemctl status bluetooth</code> <br/>
+                    Sometimes you have to press enter to see the full result of the test.
+
+                </li>
+            </ul>
+
+            
+            
+            
+            <h2></h2>
+        </p:outputLabel>
+
+        <p:commandButton
+            value="Back"
+            action="/admin/accessPointSetup"
+            icon="pi pi-arrow-left"/>
+        
+    </ui:define>
+</ui:composition>

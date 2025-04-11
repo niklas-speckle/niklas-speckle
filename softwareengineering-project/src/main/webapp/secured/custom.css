@@ -1,0 +1,15 @@
+.my-event-AVAILABLE {
+        background-color: #4CAF50 !important;
+}
+
+.my-event-MEETING {
+        background-color: #2196F3 !important;
+}
+
+.my-event-DEEP_WORK {
+        background-color: #673AB7 !important;
+}
+
+.my-event-OUT_OF_OFFICE {
+        background-color: #FF5722 !important;
+}

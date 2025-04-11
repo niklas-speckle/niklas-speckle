@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <h:form id="accessPointForm" onkeypress="if (event.key === 'Enter') {return false;}">
+            <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+
+            <p:commandButton
+                    value="Create Access Point"
+                    action="#{accessPointDetailController.createAccessPoint()}"
+                    icon="pi pi-plus"
+                    update="accessPointForm"
+                    style="margin-right: 25px"/>
+
+
+            <p:commandButton
+                    value="Setup Information"
+                    action="/admin/accessPointSetup"
+                    icon="pi pi-info-circle"
+                    style="margin-right: 10px"/>
+
+
+            <p:commandButton
+                    value="Detailed Configurations"
+                    action="/admin/accessPointConfig"
+                    icon="pi pi-info-circle"/>
+
+
+
+
+            <div class="card-header" style="margin-top: 10px">
+                <h:outputText value="To enable sorting by multiple columns, hold ctrl while you click on the sorting icon."
+                              style="color: #126198; font-weight: bold"/>
+            </div>
+            <p:dataTable id="accessPointTable" var="accessPoint" value="#{accessPointListController.accessPoints}" reflow="true">
+                <p:column headerText="ID" sortBy="#{accessPoint.id}" filterBy="#{accessPoint.id}" filterMatchMode="contains">
+                    <h:outputText value="#{accessPoint.id}"/>
+                </p:column>
+                <p:column headerText="Room" sortBy="#{accessPoint.room.roomNumber}" filterBy="#{accessPoint.room.roomNumber}"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{accessPoint.room.roomNumber}"/>
+                </p:column>
+                <p:column headerText="Tempera Devices" filterBy="#{accessPoint.temperaDeviceIDsAsString}" filterMatchMode="contains">
+                    <ui:repeat value="#{accessPoint.temperaDevices}" var="temperaDevice">
+                        <p:panelGrid columns="1">
+                            <h:outputText value="#{temperaDevice.id}"/>
+                        </p:panelGrid>
+                    </ui:repeat>
+                </p:column>
+                <p:column headerText="Status" sortBy="#{accessPoint.status}" filterBy="#{accessPoint.status}" filterMatchMode="contains">
+                    <h:outputText value="#{accessPoint.status}"/>
+                </p:column>
+                <p:column style="width:100px;text-align: center" headerText="Actions">
+                    <p:commandButton
+                            oncomplete="PF('accessPointEditDialog').show()"
+                            icon="pi pi-pencil"
+                            update="accessPointForm"
+                            style="margin: 5px">
+                        <f:setPropertyActionListener value="#{accessPoint}"
+                                                     target="#{accessPointDetailController.accessPoint}"/>
+                    </p:commandButton>
+                    <p:commandButton
+                            action="#{accessPointDetailController.deleteAccessPoint()}"
+                            icon="pi pi-trash"
+                            update="accessPointForm"
+                            style="margin: 5px">
+                        <f:setPropertyActionListener value="#{accessPoint}"
+                                                     target="#{accessPointDetailController.accessPoint}"/>
+                        <p:confirm header="Confirmation" message="This Access Point will be deleted permanently. You cannot undo this operation. Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+
+            <p:dialog id="accessPointEditDialog" header="Edit Access Point" widgetVar="accessPointEditDialog"
+                      modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="true" closable="false">
+                <p:outputPanel id="accessPointData" rendered="#{not empty accessPointDetailController.accessPoint}">
+                    <p:panelGrid columns="2">
+                        <p:outputLabel for="id" value="ID"/>
+                        <p:inputText id="id" value="#{accessPointDetailController.accessPoint.id}" disabled="true"/>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2">
+                        <p:outputLabel for="status" value="Status"/>
+<!--                        Status can only be edited if AP is registered-->
+                        <p:outputPanel rendered="#{accessPointDetailController.accessPoint.registered}">
+                            <p:selectOneMenu id="status" value="#{accessPointDetailController.deviceStatus}">
+                                <f:selectItems value="#{deviceStatusListController.selectItemsDeviceStatusList}"/>
+                            </p:selectOneMenu>
+                        </p:outputPanel>
+<!--                        Status cannot be edited if AP is not registered-->
+                        <p:outputPanel rendered="#{!accessPointDetailController.accessPoint.registered}">
+                            <p:outputLabel for="status" value="#{accessPointDetailController.deviceStatus}"/>
+                            <br/>
+                            <p style="color:Tomato;"> Access Point needs to be registered before editing status.</p>
+                            <p:commandButton
+                                    title="Setup and connect the Access Point to the network and turn it on. Click here to see the setup information."
+                                    action="/admin/accessPointConfig"
+                                    icon="pi pi-info-circle"/>
+                        </p:outputPanel>
+
+                    </p:panelGrid>
+                    <p:panelGrid columns="2">
+                        <p:outputLabel for="room" value="Room"/>
+                        <p:selectOneMenu id="room" value="#{accessPointDetailController.accessPoint.room}"
+                                         converter="roomConverter">
+                            <f:selectItems value="#{roomListController.selectItemsRoomList}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="2">
+                    <p:commandButton
+                            value="Save"
+                            action="#{accessPointDetailController.saveAccessPoint()}"
+                            icon="pi pi-save"
+                            update="accessPointForm"/>
+                    <p:commandButton
+                            value="Abort"
+                            icon="pi pi-times"
+                            action="#{accessPointDetailController.doResetAccessPoint()}"
+                            oncomplete="PF('accessPointEditDialog').hide()"
+                            update="accessPointForm:accessPointEditDialog"
+                            immediate="true"
+                            resetValues="true"/>
+                    </p:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" width="300">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

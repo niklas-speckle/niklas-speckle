@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+
+        <style>
+            code {
+                color:dimgrey;
+                font-style: italic;
+            }
+        </style>
+        
+        <p:commandButton 
+        value="Access Points"
+        action="/admin/accessPoints"
+        icon="pi pi-arrow-left"/>
+
+        &nbsp;
+        <p:commandButton
+        value="Setup"
+        action="/admin/accessPointSetup"
+        icon="pi pi-arrow-left"/>
+            
+        <p:outputLabel>
+            <h2></h2>
+            <h1>Detailed Information on Access Point Config File</h1>
+            Each Access Point can be configured via "conf.yaml". Here you can find more detailed information on all the possible configurations.
+            <h3>General Configurations</h3>
+            <ul>
+                <li>
+                    <code>group:</code> This field requires a String that identifies the group/company which the sever is set to.
+                </li>
+                <li>
+                    <code>id_accesspoint:</code> This field reqires an Integer that corresponds to the id that the Access Point was given by the server. 
+                    This id can be found on the Page <i>Access Points</i> in the <i>Admin Submenu</i> in the column "ID"
+                </li>
+                <li><code>ip_server:</code> This field requires the IP Adress of the server the backend is running on. You can find it when typing ipconfig 
+                    in the command line (of your server) and then look at the line where it says <i>IPv4-Address</i>.
+                </li>
+            </ul>
+
+            <h3>Log Configuration</h3>
+            <ul>
+                <li>
+                    <code>log_files_filepath:</code> This field requires the file path, where the standard log-files of the program shall be written to. It shall be
+                    of the form : <i>/accessPoint/python/log/log_files/</i>
+                </li>
+                <li>
+                    <code>log_file_deletion_period:</code> This field reuires an Integer stating the numbe of days after which log files shall be deleted.
+                </li>
+            </ul>
+
+            <h3>Connection Intervals</h3>
+            <ul>
+                <li>
+                    <code>connection_intervall:</code> This field requires an integer, which states the the time to wait in seconds between bluetooth
+                    connections. E.g. <i>60</i> means that the Access Point will connect to al it's Tempera Devices once per minute. This interval also
+                    determines the connection interval of the rest-get-request for updating the staus of the Tempera Devices belonging to the Access Point.
+                </li>
+                <li>
+                    <code>connection_factor_rest:</code> This field also takes an Integer. This time it is the factor how much longer the Access Point shall
+                    wait to send measurement data to the server via rest compared to the bluetooth connection. E.g. continuing the example mentioned above a 
+                    factor <i>5</i> would mean that the measurements are sent to the server every minute (while the Access Point gets them via bluetooth every
+                    minute).
+                </li>
+                <li>
+                    <code>request_timeout:</code> This field reqires an integer, how many seconds to wait for a rest request to finish before continuing with
+                    the program. The default is set to 5 seconds.
+                </li>
+                <li>
+                    <code>ble_timeout:</code> This field requires an integer, how many seconds to wait for a ble connection before defining the device as not
+                    reachable via bluetooth. The default is set to 3 seconds.
+                </li>
+            </ul>
+
+            <h3>Time Conversion</h3>
+            <ul>
+                <li>
+                    <code>time_conversion_server:</code> This has to be given with ' before and after (because of the % symbol) and describes the time
+                    conversion used at the server, which is needed for sending rest-data to the server. Default format <i>'%Y-%m-%dT%H:%M:%S'</i>
+                </li>
+                <li>
+                    <code>time_conversion_tempera_devices_server:</code> This also has to be given with ' before and after. This conversion describes the time format 
+                    update timestamps of Tempera Devices have when they are sent from the server. Default format <i>'%Y-%m-%dT%H:%M:%S.%f'</i>
+                </li>
+                <li>
+                    <code>time_format_in_messages:</code> This also has to be given with ' before and after. This describes the time format that should be used to display
+                    the current time in messages on the Access Point. Default format <i>'%Y-%m-%d %H:%M:%S'</i>
+                </li>
+            </ul>
+
+            <h3>Rest Address Configuration</h3>
+            <ul>
+                <li>
+                    <code>post_address_http:</code> Defaults to <i>"http://"</i>. Here one could change for example to https connection (would have 
+                    to work on both sides not only on the Access Point)
+                </li>
+                <li>
+                    <code>post_address_port:</code> Defaults to <i>":8080/api/"</i>. This describes the port the server's request api is linked to.
+                </li>
+                <li>
+                    <code>rest_measurement_address:</code> Defaults to <i>"measurements/"</i>. This describes the page measurement posts have to be sent to.
+                </li>
+                <li>
+                    <code>rest_time_record_address:</code> Defaults to <i>"timerecords/"</i>. This describes the page time record posts have to eb sent to.
+                </li>
+                <li>
+                    <code>rest_message_address:</code> Defaults to <i>"messages/"</i>. This describes the page message posts have to be sent to.
+                </li>
+                <li>
+                    <code>rest_get_address:</code> Defaults to <i>"temperaDevices/</i>. This describes the page where Tempera Device updates can be requested.
+                </li>
+            </ul>
+
+            <h3>Status Configurations</h3>
+            <h5>Tempera Device Status</h5>
+            <ul>
+                <li>
+                    <code>tempera_status_enabled:</code> How the device status <i>enabled</i> of Tempera Devices is called on the server.
+                </li>
+                <li>
+                    <code>tempera_status_disabled:</code> How the device status <i>disabled</i> of Tempera Devices is called on the server.
+                </li>
+                <li>
+                    <code>tempera_status_not_registered:</code> How the device status <i>not registered</i> of Tempera Devices is called on the server.
+                </li>
+            </ul>
+
+            <h5>Tempera Device Update Status</h5>
+            <ul>
+                <li>
+                    <code>tempera_list_update_created:</code> How the update staus <i>created</i> of Tempera Device Updates is called on the server.
+                </li>
+                <li>
+                    <code>tempera_list_update_updated:</code> How the update staus <i>updated</i> of Tempera Device Updates is called on the server.
+                </li>
+                <li>
+                    <code>tempera_list_update_deleted:</code> How the update staus <i>deleted</i> of Tempera Device Updates is called on the server.
+                </li>
+            </ul>
+
+            <h5>Work Modus</h5>
+            <ul>
+                <li>
+                    <code>work_mode_available:</code> How the work modus <i>available</i> called on the server.
+                </li>
+                <li>
+                    <code>work_mode_meeting:</code> How the work modus <i>meeting</i> called on the server.
+                </li>
+                <li>
+                    <code>work_mode_deep_work:</code> How the work modus <i>deep work</i> called on the server.
+                </li>
+                <li>
+                    <code>work_mode_out_of_office:</code> How the work modus <i>out of office</i> called on the server.
+                </li>
+            </ul>
+
+            <h3>BLE UUIDS</h3>
+            <ul>
+                <li>
+                    <code>uuid_measurement_service:</code> This uuid marks the transmission of measurements.
+                </li>
+                <li>
+                    <code>uuid_work_modus_service:</code> This uuid marks the transmission of time records.
+                </li>
+                <li>
+                    <code>uuid_device_name:</code> This uuid states that the following data describes the device name of the BLE device.
+                </li>
+                <li>
+                    <code>uuid_work_modus:</code> This uuid states that the following data describes the work modus the TD is currently in.
+                </li>
+                <li>
+                    <code>uuid_modus_changed:</code> This uuid states that the following data indicates if the work modus changed since the last transmission.
+                </li>                
+                <li>
+                    <code>uuid_temperature:</code> This uuid states that the following data describes the temperature measurement.
+                </li>
+                <li>
+                    <code>uuid_humidity:</code> This uuid states that the following data  describes the humidity measurement.
+                </li>
+                <li>
+                    <code>uuid_light_intensity:</code> This uuid states that the following data describes the light intensity measurement.
+                </li>
+                <li>
+                    <code>uuid_air_quality:</code> This uuid states that the following data describes the air quality measurement.
+                </li>
+                <li>
+                    <code>uuid_read_write_data:</code> This uuid marks the part, where the Access Point can tell the Tempera Device that the data was read.
+                </li>
+            </ul>
+
+
+        </p:outputLabel>
+        
+        <h2></h2>
+        <p:commandButton 
+        value="Access Points"
+        action="/admin/accessPoints"
+        icon="pi pi-arrow-left"/>
+
+        &nbsp;
+        <p:commandButton
+        value="Setup"
+        action="/admin/accessPointSetup"
+        icon="pi pi-arrow-left"/>
+        
+    </ui:define>
+</ui:composition>

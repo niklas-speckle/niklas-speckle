@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <h:form id="auditForm" onkeypress="if (event.key === 'Enter') {return false;}">
+
+            <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+            <div class="card">
+            <div class="card-header">
+                <h:outputText value="To enable sorting by multiple columns, hold ctrl while you click on the sorting icon."
+                              style="color: #126198; font-weight: bold"/>
+            </div>
+            <p:dataTable id="table" widgetVar="logTable" var="log" lazy="true"
+                         value="#{logListController.logs}"
+                         reflow="true" styleClass="products-table" rowKey="#{log.id}"
+                         paginator="true" sortMode="multiple"
+                         rows="20" paginatorPosition="bottom">
+
+                <p:column headerText="Timestamp" sortBy="#{log.timestamp}" filterBy="#{log.timestamp}">
+                    <h:outputText value="#{log.timestamp}">
+                        <f:convertDateTime type="localDate" pattern="dd.MM.yyyy HH:mm" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Authenticated User" sortBy="#{log.authenticatedUser}" filterBy="#{log.authenticatedUser}">
+                    <h:outputText value="#{log.authenticatedUser}" />
+                </p:column>
+
+                <p:column headerText="Action" sortBy="#{log.action}" filterBy="#{log.action}">
+                    <h:outputText value="#{log.action}" />
+                </p:column>
+
+                <p:column headerText="Status" sortBy="#{log.status}" filterBy="#{log.status}">
+                    <h:outputText value="#{log.status}" />
+                </p:column>
+
+                <p:column headerText="Accessed Resource" sortBy="#{log.accessedResource}" filterBy="#{log.accessedResource}">
+                    <h:outputText value="#{log.accessedResource}" />
+                </p:column>
+
+                <p:column headerText="Additional Details" sortBy="#{log.additionalDetails}" filterBy="#{log.additionalDetails}">
+                    <h:outputText value="#{log.additionalDetails}" />
+                </p:column>
+            </p:dataTable>
+            </div>
+
+
+
+
+        </h:form>
+    </ui:define>
+</ui:composition>

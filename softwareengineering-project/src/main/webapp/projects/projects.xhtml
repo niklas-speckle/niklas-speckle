@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+
+
+    <ui:define name="content">
+
+        <h:form id="projectForm" onkeypress="if (event.key === 'Enter') {return false;}">
+            <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
+            <p:commandButton rendered="#{sessionInfoBean.hasRole('MANAGER') or sessionInfoBean.hasRole('ADMINISTRATOR')}"
+                    value="Create New Project" action="#{projectDetailController.createNewProject()}"
+                             update=":newProjectDialog" oncomplete="PF('newProjectDialog').show()"
+                             icon="pi pi-plus" styleClass="ui-button-success"/>
+            <div class="card-header" style="margin-top: 10px">
+                <h:outputText value="To enable sorting by multiple columns, hold ctrl while you click on the sorting icon."
+                              style="color: #126198; font-weight: bold"/>
+            </div>
+            <p:dataTable id="projectsTable" var="project" value="#{projectListController.projects}" reflow="true">
+                <p:column headerText="Name" sortBy="#{project.name}" filterBy="#{project.name}" filterMatchMode="contains">
+                    <h:outputText value="#{project.name}"/>
+                </p:column>
+                <p:column headerText="Manager" sortBy="#{project.projectManager.username}" filterBy="#{project.projectManager.username}" filterMatchMode="contains">
+                    <h:outputText value="#{project.projectManager.username}"/>
+                </p:column>
+                <p:column headerText="Description" sortBy="#{project.description}" filterBy="#{project.description}" filterMatchMode="contains">
+                    <h:outputText value="#{project.description}"/>
+                </p:column>
+                <p:column headerText="Work Groups" filterBy="#{project.workGroups}" filterMatchMode="contains">
+                    <ui:repeat value="#{project.workGroups}" var="workGroup">
+                        <h:outputText value="#{workGroup.name}"/>
+                        <br/>
+                    </ui:repeat>
+                </p:column>
+                <p:column headerText="Users" filterBy="#{project.users}" filterMatchMode="contains">
+                    <ui:repeat value="#{project.users}" var="user">
+                        <h:outputText value="#{user.username}"/>
+                        <br/>
+                    </ui:repeat>
+                </p:column>
+                <p:column headerText="Disabled" sortBy="#{project.disabled}" filterBy="#{project.disabled}" filterMatchMode="contains" filterValue="false">
+                    <h:outputText value="#{project.disabled}"/>
+                </p:column>
+                
+                <p:column style="width:100px;text-align: center" headerText="Actions">
+                    <p:commandButton rendered="#{(sessionInfoBean.hasRole('ADMINISTRATOR') or (sessionInfoBean.hasRole('MANAGER') and sessionInfoBean.currentUser eq project.projectManager)) and not (project.disabled)}"
+                            update=":projectEditDialog" oncomplete="PF('projectEditDialog').show()"
+                                     icon="pi pi-file-edit" title="Edit"
+                                    action="#{projectDetailController.setProject(project)}"
+                                     style="margin: 5px"/>
+
+                    <p:commandButton rendered="#{(sessionInfoBean.hasRole('ADMINISTRATOR') or (sessionInfoBean.hasRole('MANAGER') and sessionInfoBean.currentUser eq project.projectManager)) and not (project.disabled)}"
+                                     action="#{projectDetailController.doDeleteProject}"
+                                     icon="pi pi-trash"
+                                     title="Delete" update=":projectForm"
+                                     style="margin: 5px">
+                        <f:setPropertyActionListener value="#{project}" target="#{projectDetailController.project}"/>
+                        <p:confirm header="Confirmation"
+                                   message="The project will be disabled. You cannot undo this operation. Are you sure you want to proceed?"
+                                   icon="ui-icon-alert"/>
+                    </p:commandButton>
+                    <p:commandButton rendered="#{projectDetailController.groupLeaderWorksOnProject(project) and not (project.disabled)}"
+                                     update=":userSearchDialog"
+                                     oncomplete="PF('userSearchDialog').show()" value="Assign Employees"
+                                     style="margin: 5px">
+                        <f:setPropertyActionListener value="#{project}" target="#{projectDetailController.project}"/>
+                    </p:commandButton>
+                </p:column>
+    </p:dataTable>
+        </h:form>
+
+            <p:dialog header="New Project" id="newProjectDialog" widgetVar="newProjectDialog" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="true" closable="false">
+                <h:form id="createForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                <p:outputPanel id="newProjectData" rendered="#{not empty projectDetailController.project}">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="newName" value="Name: "/>
+                        <p:inputText id="newName" value="#{projectDetailController.project.name}" maxlength="150" required="true" requiredMessage="Name must not be empty."/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="newDescription" value="Description: "/>
+                        <p:inputText id="newDescription" value="#{projectDetailController.project.description}" maxlength="250" required="true" requiredMessage="Description must not be empty."/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3">
+                        <p:commandButton value="Save"
+                                         icon="pi pi-save"
+                                         action="#{projectDetailController.doSaveProject()}"
+                                         oncomplete="PF('newProjectDialog').hide();"
+                                         update=":projectForm:msg, :createForm"/>
+                        <p:commandButton value="Abort"
+                                         icon="pi pi-times"
+                                         action="#{projectDetailController.doResetProject()}"
+                                         oncomplete="PF('newProjectDialog').hide()"
+                                         update=":projectForm, :createForm"
+                                         immediate="true"
+                                         resetValues="true"/>
+                    </h:panelGrid>
+                </p:outputPanel>
+        </h:form>
+    </p:dialog>
+
+            <p:dialog header="Edit Project" id="projectEditDialog" widgetVar="projectEditDialog" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="true" closable="false">
+                <h:form id="editForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                <p:outputPanel id="projectData" rendered="#{not empty projectDetailController.project}">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="name" value="Name: "/>
+                        <p:inputText id="name" value="#{projectDetailController.project.name}" maxlength="150" required="true" requiredMessage="Name must not be empty."/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="projectManager" value="Manager: "/>
+                        <p:selectOneMenu
+                                id="projectManager"
+                                filter="true"
+                                filterMatchMode="startsWith"
+                                converter="userConverter"
+                                value="#{projectDetailController.selectedManager}">
+                            <f:selectItems value="#{userListController.selectItemsManagerList}"/>
+                        </p:selectOneMenu>
+
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="description" value="Description: "/>
+                        <p:inputText id="description" value="#{projectDetailController.project.description}" maxlength="250" required="true" requiredMessage="Description must not be empty."/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid id="selectManyWorkGroup" columns="2">
+                        <p:outputLabel for="workGroups" value="Work Groups: "/>
+                        <p:selectManyMenu
+                                id="workGroups"
+                                value="#{projectDetailController.selectedWorkGroups}"
+                                converter="workGroupConverter"
+                                scrollHeight="150"
+                                showCheckbox="true"
+                                filter="true"
+                                filterMatchMode="startsWith">
+                            <f:selectItems value="#{workGroupListController.selectItemsWorkGroupList}"/>
+                        </p:selectManyMenu>
+                        <p:commandButton
+                                action="#{projectDetailController.doDeselectAllWorkGroups()}"
+                                update=":editForm:selectManyWorkGroup"
+                                value="Deselect All Work Groups"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="3">
+                        <p:commandButton value="Save"
+                                         icon="pi pi-save"
+                                         action="#{projectDetailController.doSaveProject()}"
+                                         oncomplete="PF('projectEditDialog').hide()"
+                                         update=":projectForm:msg, :editForm"/>
+                        <p:commandButton value="Abort"
+                                         icon="pi pi-times"
+                                         oncomplete="PF('projectEditDialog').hide()"
+                                         action="#{projectDetailController.doResetProject()}"
+                                         update=":projectForm"
+                                         immediate="true"
+                                         resetValues="true"/>
+                    </h:panelGrid>
+                </p:outputPanel>
+        </h:form>
+    </p:dialog>
+
+            <p:dialog header="Assign Users" id="userSearchDialog" widgetVar="userSearchDialog" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="true" closable="false">
+                <h:form id="assignForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                <h:outputText value="You can only add/remove users from your work groups of this project." rendered="#{sessionInfoBean.hasRole('GROUP_LEADER')}"/>
+                <h:outputText value="You can only add/remove users from work groups of this project." rendered="#{sessionInfoBean.hasRole('MANAGER') or sessionInfoBean.hasRole('ADMIN')}"/>
+
+                <h:panelGrid id="selectManyUsers">
+                    <p:selectManyMenu
+                            id="users"
+                            value="#{projectDetailController.selectedUsers}"
+                            showCheckbox="true"
+                            scrollHeight="150"
+                            filter="true"
+                            filterMatchMode="startsWith">
+                        <f:selectItems value="#{projectDetailController.selectItemsForAssignUsersDialog}"/>
+                    </p:selectManyMenu>
+                    <p:commandButton value="Deselect All"
+                                     update=":assignForm:selectManyUsers"
+                                     action="#{projectDetailController.doDeselectAllUsers()}"/>
+                </h:panelGrid>
+                <p:separator/>
+                <h:panelGrid columns="3">
+                <p:commandButton value="Save"  icon="pi pi-save"
+                                 action="#{projectDetailController.doSetUsers()}"
+                                 oncomplete="PF('userSearchDialog').hide()" update=":projectForm:msg, :assignForm"/>
+                <p:commandButton value="Abort"
+                                 icon="pi pi-times"
+                                 oncomplete="PF('userSearchDialog').hide()"
+                                 action="#{projectDetailController.doResetProject()}"
+                                 update=":projectForm"
+                                 immediate="true"
+                                 resetValues="true"/>
+                </h:panelGrid>
+        </h:form>
+    </p:dialog>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" width="300">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+    </ui:define>
+</ui:composition>

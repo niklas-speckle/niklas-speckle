@@ -1,0 +1,320 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <h:form id="roomForm" onkeypress="if (event.key === 'Enter') {return false;}">
+            <p:messages id="msg" showDetail="true" showSummary="false" autoUpdate="true" closable="true"/>
+            <p:commandButton
+                    title="Create New Room"
+                    value="Create New Room"
+                    icon="pi pi-plus"
+                    action="#{roomDetailController.doCreateRoom()}"
+                    update=":roomCreateDialog"
+                    oncomplete="PF('roomCreateDialog').show()">
+            </p:commandButton>
+            <div class="card-header" style="margin-top: 10px">
+                <h:outputText value="To enable sorting by multiple columns, hold ctrl while you click on the sorting icon."
+                              style="color: #126198; font-weight: bold"/>
+            </div>
+            <p:dataTable id="roomsTable" var="room" value="#{roomListController.rooms}" lazy="false" reflow="true">
+                <p:column headerText="Room Number" sortBy="#{room.roomNumber}" filterBy="#{room.roomNumber}"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{room.roomNumber}"/>
+                </p:column>
+                <p:column headerText="Floor" sortBy="#{room.floor}" filterBy="#{room.floor}" filterMatchMode="contains">
+                    <h:outputText value="#{room.floor}"/>
+                </p:column>
+                <p:column headerText="Climate Warning Limits">
+                    <!-- Sorting limits by SensorType ordinal directly in the page -->
+                    <ui:repeat value="#{room.limitsList.stream().sorted((l1, l2) -> l1.sensorType.ordinal() - l2.sensorType.ordinal()).toArray()}" var="limit">
+                        <p:panelGrid columns="2" style="margin-bottom: 0px;">
+                            <h:outputText value="#{limit.sensorType.toString()}"
+                                          style="margin-bottom: 0px; font-weight: bold"/>
+                            <h:outputText value="#{limit.lowerLimit} - #{limit.upperLimit}" style="margin-bottom: 0px"/>
+                        </p:panelGrid>
+                    </ui:repeat>
+                </p:column>
+
+                <p:column style="width:100px;text-align: center" headerText="Actions">
+                    <p:commandButton update=":roomEditDialog" oncomplete="PF('roomEditDialog').show()"
+                                     icon="pi pi-file-edit" title="Edit" style="margin: 5px">
+                        <f:setPropertyActionListener value="#{room}" target="#{roomDetailController.room}"/>
+                    </p:commandButton>
+                    <p:commandButton action="#{roomDetailController.doDeleteRoom()}" icon="pi pi-trash"
+                                     update=":roomForm" style="margin: 5px">
+                        <f:setPropertyActionListener value="#{room}" target="#{roomDetailController.room}"/>
+                        <p:confirm header="Confirmation"
+                                   message="Are you sure that you want to delete this room? You cannot undo this operation."
+                                   icon="ui-icon-alert"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+            <p:dialog header="Edit Room" id="roomEditDialog" widgetVar="roomEditDialog" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="true" closable="false"
+                      style="max-height: 80% !important; overflow:auto">
+                <h:form id="editForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                <p:outputPanel id="roomData" rendered="#{not empty roomDetailController.room}">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="roomNumber" value="Room Number: "/>
+                        <p:inputText id="roomNumber" value="#{roomDetailController.room.roomNumber}" disabled="true"/>
+                        <p:outputLabel for="floor" value="Floor: "/>
+                        <p:inputText id="floor" value="#{roomDetailController.room.floor}" maxlength="150"/>
+                    </h:panelGrid>
+                    <h4>Limits</h4>
+
+                    <h:panelGroup id="tempLimitsPanel">
+                        <h:panelGrid columns="2">
+                            <!-- AIR_TEMPERATURE Limit -->
+                            <h:outputText value="AIR_TEMPERATURE" style="font-weight: bold"/>
+                            <br/>
+                            <p:outputLabel for="minValueAirTemperature" value="Lower Limit: "/>
+                            <p:inputText id="minValueAirTemperature"
+                                         value="#{roomDetailController.room.limitsList[0].lowerLimit}">
+                                <p:ajax event="change"
+                                        listener="#{roomDetailController.onLimitChange(roomDetailController.room.limitsList[0])}"
+                                        update="tempLimitsPanel"
+                                        oncomplete="PrimeFaces.focus('editForm:reasonForChangeAirTemperature');"/>
+
+                            </p:inputText>
+                            <p:outputLabel for="maxValueAirTemperature" value="Upper Limit: "/>
+                            <p:inputText id="maxValueAirTemperature"
+                                         value="#{roomDetailController.room.limitsList[0].upperLimit}">
+                                <p:ajax event="change"
+                                        listener="#{roomDetailController.onLimitChange(roomDetailController.room.limitsList[0])}"
+                                        update="tempLimitsPanel"
+                                        oncomplete="PrimeFaces.focus('editForm:reasonForChangeAirTemperature');"/>
+                            </p:inputText>
+                        </h:panelGrid>
+                        <h:panelGroup id="reasonForTemperatureChangePanel"
+                                      rendered="#{roomDetailController.isLimitChanged(roomDetailController.room.limitsList[0])}">
+                            <h:panelGrid columns="2" style="margin-top: 10px;">
+                                <p:outputLabel for="reasonForChangeAirTemperature" value="Reason for change: "/>
+                                <p:inputText id="reasonForChangeAirTemperature"
+                                             value="#{roomDetailController.room.limitsList[0].reasonForChange}"
+                                             required="true"
+                                             requiredMessage="Please provide a reason for the change of limits."
+                                             maxlength="150"/>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+                        <!-- AIR_HUMIDITY Limit -->
+                    <h:panelGroup id="humLimitsPanel">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="AIR_HUMIDITY" style="font-weight: bold"/>
+                            <br/>
+                            <p:outputLabel for="minValueAirHumidity" value="Lower Limit: "/>
+                            <p:inputText id="minValueAirHumidity"
+                                         value="#{roomDetailController.room.limitsList[1].lowerLimit}">
+                                <p:ajax event="change"
+                                        listener="#{roomDetailController.onLimitChange(roomDetailController.room.limitsList[1])}"
+                                        update="humLimitsPanel"
+                                        oncomplete="PrimeFaces.focus('editForm:reasonForChangeAirHumidity');"/>
+                            </p:inputText>
+                            <p:outputLabel for="maxValueAirHumidity" value="Upper Limit: "/>
+                            <p:inputText id="maxValueAirHumidity"
+                                         value="#{roomDetailController.room.limitsList[1].upperLimit}">
+                                <p:ajax event="change"
+                                        listener="#{roomDetailController.onLimitChange(roomDetailController.room.limitsList[1])}"
+                                        update="humLimitsPanel"
+                                        oncomplete="PrimeFaces.focus('editForm:reasonForChangeAirHumidity');"/>
+                            </p:inputText>
+                        </h:panelGrid>
+                        <h:panelGroup id="reasonPanelAirHumidity"
+                                      rendered="#{roomDetailController.isLimitChanged(roomDetailController.room.limitsList[1])}">
+                            <h:panelGrid columns="2" style="margin-top: 10px;">
+                                <p:outputLabel for="reasonForChangeAirHumidity" value="Reason for change: "/>
+                                <p:inputText id="reasonForChangeAirHumidity"
+                                             value="#{roomDetailController.room.limitsList[1].reasonForChange}"
+                                             required="true"
+                                             requiredMessage="Please provide a reason for the change of limits."
+                                             maxlength="150"/>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+                        <!-- AIR_QUALITY Limit -->
+                    <h:panelGroup id="airLimitsPanel">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="AIR_QUALITY" style="font-weight: bold"/>
+                            <br/>
+                            <p:outputLabel for="minValueAirQuality" value="Lower Limit: "/>
+                            <p:inputText id="minValueAirQuality"
+                                         value="#{roomDetailController.room.limitsList[2].lowerLimit}">
+                                <p:ajax event="change"
+                                        listener="#{roomDetailController.onLimitChange(roomDetailController.room.limitsList[2])}"
+                                        update="airLimitsPanel"
+                                        oncomplete="PrimeFaces.focus(':editForm:reasonForChangeAirQuality);"/>
+                            </p:inputText>
+                            <p:outputLabel for="maxValueAirQuality" value="Upper Limit: "/>
+                            <p:inputText id="maxValueAirQuality"
+                                         value="#{roomDetailController.room.limitsList[2].upperLimit}">
+                                <p:ajax event="change"
+                                        listener="#{roomDetailController.onLimitChange(roomDetailController.room.limitsList[2])}"
+                                        update="airLimitsPanel"
+                                        oncomplete="PrimeFaces.focus(':editForm:reasonForChangeAirQuality');"/>
+                            </p:inputText>
+                        </h:panelGrid>
+                        <h:panelGroup id="reasonPanelAirQuality"
+                                      rendered="#{roomDetailController.isLimitChanged(roomDetailController.room.limitsList[2])}">
+                            <h:panelGrid columns="2" style="margin-top: 10px;">
+                                <p:outputLabel for="reasonForChangeAirQuality" value="Reason for change: "/>
+                                <p:inputText id="reasonForChangeAirQuality"
+                                             value="#{roomDetailController.room.limitsList[2].reasonForChange}"
+                                             required="true"
+                                             requiredMessage="Please provide a reason for the change of limits."
+                                             maxlength="150"/>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+                        <!-- LIGHT_INTENSITY Limit -->
+                    <h:panelGroup id="lightLimitsPanel">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="LIGHT_INTENSITY" style="font-weight: bold"/>
+                            <br/>
+                            <p:outputLabel for="minValueLightIntensity" value="Lower Limit: "/>
+                            <p:inputText id="minValueLightIntensity"
+                                         value="#{roomDetailController.room.limitsList[3].lowerLimit}">
+                                <p:ajax event="change"
+                                        listener="#{roomDetailController.onLimitChange(roomDetailController.room.limitsList[3])}"
+                                        update="lightLimitsPanel"
+                                        oncomplete="PrimeFaces.focus(':editForm:reasonForChangeLightIntensity');"/>
+                            </p:inputText>
+                            <p:outputLabel for="maxValueLightIntensity" value="Upper Limit: "/>
+                            <p:inputText id="maxValueLightIntensity"
+                                         value="#{roomDetailController.room.limitsList[3].upperLimit}">
+                                <p:ajax event="change"
+                                        listener="#{roomDetailController.onLimitChange(roomDetailController.room.limitsList[3])}"
+                                        update="lightLimitsPanel"
+                                        oncomplete="PrimeFaces.focus(':editForm:reasonForChangeLightIntensity');"/>
+                            </p:inputText>
+                        </h:panelGrid>
+                        <h:panelGroup id="reasonPanelLightIntensity"
+                                      rendered="#{roomDetailController.isLimitChanged(roomDetailController.room.limitsList[3])}">
+                            <h:panelGrid columns="2" style="margin-top: 10px;">
+                                <p:outputLabel for="reasonForChangeLightIntensity" value="Reason for change: "/>
+                                <p:inputText id="reasonForChangeLightIntensity"
+                                             value="#{roomDetailController.room.limitsList[3].reasonForChange}"
+                                             required="true"
+                                             requiredMessage="Please provide a reason for the change of limits."
+                                             maxlength="150"/>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+
+                    <h4>Messages</h4>
+                    <h:panelGrid columns="2">
+                        <ui:repeat value="#{roomDetailController.room.limitsList}" var="limit">
+                            <h:outputText value="#{limit.sensorType.toString()}" style="font-weight: bold"/>
+                            <br/>
+                            <p:outputLabel for="upperMessage" value="Upper Limit Message: "/>
+                            <p:inputText id="upperMessage" value="#{limit.messageUpper}" maxlength="250"/>
+                            <br/>
+                            <p:outputLabel for="lowerMessage" value="Lower Limit Message: "/>
+                            <p:inputText id="lowerMessage" value="#{limit.messageLower}" maxlength="250"/>
+                            <br/>
+                            <br/>
+                        </ui:repeat>
+
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:messages id="dialogMsg" widgetVar="dialogMsg" showDetail="true" showSummary="false" autoUpdate="false" closable="true"/>
+                    <h:panelGrid columns="2">
+                        <p:commandButton value="Save"
+                                         icon="pi pi-save"
+                                         action="#{roomDetailController.doSaveRoom}"
+                                         oncomplete="if (!args.validationFailed) { PF('roomEditDialog').hide();}"
+                                         update=":editForm:dialogMsg"/>
+                        <p:commandButton value="Abort"
+                                         icon="pi pi-times"
+                                         onclick="PF('roomEditDialog').hide()"
+                                         update=":editForm, :editForm:dialogMsg"
+                                         immediate="true"
+                                         resetValues="true"
+                                         action="#{roomDetailController.doResetRoom()}">
+                            <p:resetInput target=":editForm" />
+                        </p:commandButton>
+                    </h:panelGrid>
+                </p:outputPanel>
+                </h:form>
+            </p:dialog>
+
+
+            <p:dialog header="Create New Room" id="roomCreateDialog" widgetVar="roomCreateDialog" modal="true"
+                      showEffect="fade" hideEffect="fade" resizable="true" closable="false"
+                      style="max-height: 80% !important; overflow:auto">
+                <h:form id="createForm" onkeypress="if (event.key === 'Enter') {return false;}">
+                <p:outputPanel id="roomNewData" rendered="#{not empty roomDetailController.room}">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="roomNewNumber" value="Room Number: "/>
+                        <p:inputText id="roomNewNumber" value="#{roomDetailController.room.roomNumber}" maxlength="150" required="true" requiredMessage="Room number must not be null."/>
+                        <p:outputLabel for="Newfloor" value="Floor: "/>
+                        <p:inputText id="Newfloor" value="#{roomDetailController.room.floor}" maxlength="150"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h4>Limits</h4>
+                    <h:panelGrid columns="2">
+                        <ui:repeat value="#{roomDetailController.room.limitsList}" var="limit">
+                            <h:outputText value="#{limit.sensorType.toString()}" style="font-weight: bold"/>
+                            <br/>
+                            <p:outputLabel for="minNewValue" value="Lower Limit: "/>
+                            <p:inputText id="minNewValue" value="#{limit.lowerLimit}"/>
+                            <p:outputLabel for="maxNewValue" value="Upper Limit: "/>
+                            <p:inputText id="maxNewValue" value="#{limit.upperLimit}"/>
+                            <br/>
+                        </ui:repeat>
+                    </h:panelGrid>
+                    <h4>Messages</h4>
+                    <h:panelGrid columns="2">
+                        <ui:repeat value="#{roomDetailController.room.limitsList}" var="limit">
+                            <h:outputText value="#{limit.sensorType.toString()}" style="font-weight: bold"/>
+                            <br/>
+                            <p:outputLabel for="upperNewMessage" value="Upper Limit Message: "/>
+                            <p:inputText id="upperNewMessage" value="#{limit.messageUpper}" maxlength="250"/>
+                            <br/>
+                            <p:outputLabel for="lowerNewMessage" value="Lower Limit Message: "/>
+                            <p:inputText id="lowerNewMessage" value="#{limit.messageLower}" maxlength="250"/>
+                            <br/>
+                            <br/>
+                        </ui:repeat>
+                    </h:panelGrid>
+                    <p:messages id="createMsg" widgetVar="creategMsg" showDetail="true" showSummary="false" autoUpdate="false" closable="true"/>
+                    <h:panelGrid columns="2">
+                        <p:commandButton value="Save"
+                                         icon="pi pi-save"
+                                         action="#{roomDetailController.doSaveRoom()}"
+                                         oncomplete="if (!args.validationFailed) { PF('roomCreateDialog').hide();}"
+                                         update=":createForm:createMsg"/>
+                        <p:commandButton value="Abort"
+                                         icon="pi pi-times"
+                                         onclick="PF('roomCreateDialog').hide()"
+                                         update=":createForm"
+                                         action="#{roomDetailController.doResetRoom()}"
+                                         immediate="true"
+                                         resetValues="true">
+                            <p:resetInput target=":createForm" />
+                        </p:commandButton>
+                    </h:panelGrid>
+                </p:outputPanel>
+                </h:form>
+            </p:dialog>
+
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" width="300">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+
+
+    </ui:define>
+</ui:composition>

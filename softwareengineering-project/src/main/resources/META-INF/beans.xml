@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                           http://xmlns.jcp.org/xml/ns/javaee/beans_2_0.xsd"
+	version="2.0" bean-discovery-mode="annotated">
+	<!-- Not used. Weld seems to be intelligent enough to exclude spring-beans
+		by itself. If you encounter any problems of spring trying to inject CDI-managed
+		components, comment the following tag in -->
+<!--
+	<scan>
+		<exclude name="org.springframework.**"></exclude>
+	</scan>
+-->
+</beans>

@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{timeRecordListController.initForGroupLeader()}"/>
+    </f:metadata>
+
+
+    <ui:define name="content">
+        <h:form id="mainForm" onkeypress="if (event.key === 'Enter') {return false;}">
+            <p:messages id="message" showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
+
+            <p:outputPanel>
+                <h5>Here you see an overview of the cumulative work hours of all the groups you are leading.</h5>
+            </p:outputPanel>
+
+            <p:tabView dynamic="true" cache="true" effect="fold" id="tabView">
+
+                <p:tab title="Chart">
+                    <div class="grid">
+                        <div class="col-12 md:col-8">
+                            <div class="card">
+                                <p:barChart type="bar" model="#{timeRecordChartController.barModel}" id="chart"
+                                            widgetVar="chart"/>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Settings for Chart</h5>
+                                </div>
+                                <p:outputLabel for="groupBy" value="Group time records by:"/>
+                                <p:selectOneListbox id="groupBy" value="#{timeRecordChartController.groupBy}">
+                                    <f:selectItem itemLabel="Project" itemValue="Project"/>
+                                    <f:selectItem itemLabel="Work Group" itemValue="Work Group"/>
+                                    <f:selectItem itemLabel="Work Mode" itemValue="Work Mode"/>
+                                </p:selectOneListbox>
+
+                                <p:separator/>
+
+                                <p:outputLabel for="range" value="Range:"/>
+                                <p:datePicker id="range" selectionMode="range" value="#{timeRecordChartController.range}"
+                                              readonlyInput="true" pattern="dd.MM.yy"/>
+
+                                <p:separator/>
+
+                                <p:commandButton value="Submit" actionListener="#{timeRecordChartController.createChart()}"
+                                                 update="chart, mainForm:message" icon="pi pi-check"/>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </p:tab>
+
+                <p:tab title="List">
+                    <div class="card">
+                        <div class="card-header">
+                            <p:panelGrid columns="1" styleClass="card-header" columnClasses="vertical-align">
+                                <p:outputPanel id="totalDurationPanel">
+                                    <h5>
+                                        <h:outputText value="Total work time for filtered time records: #{timeRecordListController.totalDuration} min" style="font-weight: bold;"/>
+                                    </h5>
+                                </p:outputPanel>
+                                <h:panelGroup>
+                                    <h:outputText value="Click enter after filtering to recalculate the total work time based on the new filter criteria."
+                                                  style="color: #126198; font-weight: bold"/>
+                                    <br/>
+                                    <h:outputText value="To enable sorting by multiple columns, hold ctrl while you click on the sorting icon."
+                                                  style="color: #126198; font-weight: bold"/>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </div>
+                        <p:dataTable id="timeRecordTable" widgetVar="timeReckordTable" var="timeRecord"
+                                     value="#{timeRecordListController.timeRecords}"
+                                     filteredValue="#{timeRecordListController.filteredTimeRecords}"
+                                     reflow="true" styleClass="products-table" rowKey="#{timeRecord.id}"
+                                     paginator="true" paginatorPosition="bottom"
+                                     rows="10" rowSelectMode="add" sortMode="multiple">
+                            <p:ajax event="filter" listener="#{timeRecordListController.onFilter}"
+                                    update="mainForm:tabView:totalDurationPanel"/>
+
+                            <p:column headerText="Work Group" sortBy="#{timeRecord.workGroup.name}"
+                                      filterBy="#{timeRecord.workGroup.name}">
+                                <h:outputText value="#{timeRecord.workGroup}"/>
+                            </p:column>
+
+                            <p:column headerText="Work Mode" sortBy="#{timeRecord.workMode}"
+                                      filterBy="#{timeRecord.workMode}">
+                                <h:outputText value="#{timeRecord.workMode}"/>
+                            </p:column>
+
+                            <p:column headerText="Project" sortBy="#{timeRecord.project.name}"
+                                      filterBy="#{timeRecord.project.name}">
+                                <h:outputText value="#{timeRecord.project}"/>
+                            </p:column>
+
+                            <p:column headerText="Date" sortBy="#{timeRecord.startTime.toLocalDate()}" filterBy="#{timeRecord.startTime.toLocalDate()}"
+                                      filterFunction="#{timeRecordListController.filterByDateWithoutTime}">
+                                <h:outputText value="#{timeRecord.startTime.toLocalDate()}">
+                                <f:convertDateTime type="localDateTime" pattern="dd.MM.yyyy"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Duration" sortBy="#{timeRecord.duration}"
+                                      filterBy="#{timeRecord.duration}">
+                                <h:outputText value="#{timeRecord.duration} min"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+
+                </p:tab>
+
+            </p:tabView>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

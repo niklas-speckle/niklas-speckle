@@ -1,0 +1,46 @@
+group: G4T2
+id_accesspoint: 1
+ip_server: localhost
+
+log_files_filepath: "hardware/accessPoint/python/log/log_files/"
+log_file_deletion_period: 14 #days
+
+connection_intervall: 60 #seconds
+connection_factor_rest: 5 #factor longer than connection_interval (for ble) (has to be integer)
+request_timeout: 2 #seconds
+ble_timeout: 3 # seconds
+
+time_conversion_server: '%Y-%m-%dT%H:%M:%S'
+time_conversion_tempera_devices_server: '%Y-%m-%dT%H:%M:%S.%f'
+time_format_in_messages: '%Y-%m-%d %H:%M:%S'
+
+post_address_http: "http://"
+post_address_port: ":8080/api/"
+rest_measurement_address: "measurements/"
+rest_time_record_address: "timerecords/"
+rest_message_address: "messages/"
+rest_get_address: "temperaDevices/"
+
+tempera_status_enabled: ENABLED
+tempera_status_disabled: DISABLED
+tempera_status_not_registered: NOT_REGISTERED
+
+tempera_list_update_created: CREATED
+tempera_list_update_updated: UPDATED
+tempera_list_update_deleted: DELETED
+
+work_mode_available: AVAILABLE
+work_mode_meeting: MEETING
+work_mode_deep_work: DEEP_WORK
+work_mode_out_of_office: OUT_OF_OFFICE
+
+uuid_measurement_service: "00000000-0000-0000-0000-00000000181c"
+uuid_work_modus_service: "00000000-0000-0000-0000-000000001811"
+uuid_device_name: "00000000-0000-0000-0000-000000002a00"
+uuid_work_modus: "00000000-0000-0000-0000-000000002bde"
+uuid_modus_changed: "00000000-0000-0000-0000-000000002a7d"
+uuid_temperature: "00000000-0000-0000-0000-000000002a6e"
+uuid_humidity: "00000000-0000-0000-0000-000000000544"
+uuid_light_intensity: "00000000-0000-0000-0000-00000000054b"
+uuid_air_quality: "00000000-0000-0000-0000-000000000542"
+uuid_read_write_data: "00002a7d-0000-1000-8000-00805f9b34fb"

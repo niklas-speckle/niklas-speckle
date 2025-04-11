@@ -1,0 +1,306 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{timeRecordChartController.initForWelcomePage()}"/>
+        <f:event type="preRenderView"
+                 listener="#{userListController.initWorkGroupCoworkers()}"/>
+    </f:metadata>
+
+
+    <ui:define name="content">
+        <h:form id="welcomeForm" onkeypress="if (event.key === 'Enter') {return false;}">
+            <p:messages id="editMessage" for="editDialog start split" showDetail="true" showSummary="false" closable="true" autoupdate="true"/>
+            <div class="layout-dashboard">
+                <div class="grid">
+
+                    <!-- ...........Current Room Climate............ -->
+                    <div class="col-12 md:col-6">
+                        <div class="card" style="height: 100%">
+                            <div class="card-header">
+                                <h5>Current room climate at your work place:</h5>
+                            </div>
+                            <div class="grid">
+                                <div class="col-12 md:col-6 xl:col-3">
+                                    <div class="card stat-box"
+                                         style="outline-style: hidden; background-color: #{climateMeasurementController.temperatureColor}">
+                                        <div class="stats">
+                                        <span class="stat-title">
+                                            <h5>
+                                                Temperature
+                                                <i class="fa fa-solid fa-temperature-low"
+                                                   style="float: right; font-size: 2rem"/>
+                                            </h5>
+
+                                        </span>
+                                            <div>#{climateMeasurementController.getTemperature()}</div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 md:col-6 xl:col-3">
+                                    <div class="card stat-box"
+                                         style="outline-style: hidden; background-color: #{climateMeasurementController.humidityColor}">
+                                        <div class="stats">
+                                        <span class="stat-title">
+                                            <h5>
+                                                Humidity
+                                                <i class="fa fa-solid fa-droplet"
+                                                   style="float: right; font-size: 2rem"/>
+                                            </h5>
+                                        </span>
+                                            <div>#{climateMeasurementController.getHumidity()}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 md:col-6 xl:col-3">
+                                    <div class="card stat-box"
+                                         style="outline-style: hidden; background-color: #{climateMeasurementController.airQualityColor}">
+                                        <div class="stats">
+                                        <span class="stat-title">
+                                            <h5>
+                                                Air Quality
+                                                <i class="fa fa-solid fa-wind"
+                                                   style="float: right; font-size: 2rem"/>
+                                            </h5>
+                                        </span>
+                                            <div>#{climateMeasurementController.getAirQuality()}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 md:col-6 xl:col-3">
+                                    <div class="card stat-box"
+                                         style="outline-style: hidden; background-color: #{climateMeasurementController.lightColor}">
+                                        <div class="stats">
+                                        <span class="stat-title">
+                                            <h5>
+                                                Light
+                                                    <i class="fa fa-solid fa-lightbulb"
+                                                       style="float: right; font-size: 2rem"/>
+                                            </h5>
+                                        </span>
+                                            <div>#{climateMeasurementController.getLight()}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ...........Current Room Climate End............ -->
+
+
+                    <!-- ...........Current Time Record............ -->
+                    <div class="col-12 md:col-6">
+                        <div class="card" style="height: 100%">
+                            <div class="card-header">
+                                <h5>Current Time Record:</h5>
+                                <p:commandButton update="editDialog" oncomplete="PF('editDialog').show()"
+                                                 icon="pi pi-pencil" value="Edit"
+                                                 rendered="#{timeRecordDetailController.currentTimeRecord ne null}"
+                                                 action="#{timeRecordDetailController.prepareForEdit(timeRecordDetailController.currentTimeRecord)}">
+                                </p:commandButton>
+                            </div>
+                            <p:outputPanel id="currentTR">
+                                <p:panelGrid columns="4"
+                                             rendered="#{timeRecordDetailController.currentTimeRecord ne null}"
+                                             style="width: 100%; text-align: left;">
+
+                                    <p:outputLabel for="time" value="Start Time:"/>
+                                    <h:outputText id="time"
+                                                  value="#{timeRecordDetailController.currentTimeRecord.startTime}">
+                                        <f:convertDateTime type="localDate" pattern="dd.MM.yyyy HH:mm"/>
+                                    </h:outputText>
+                                    <p:outputLabel for="project" value="Project:"/>
+                                    <h:outputText id="project"
+                                                  value="#{timeRecordDetailController.currentTimeRecord.project != null ? timeRecordDetailController.currentTimeRecord.project : 'no project assigned'}"/>
+                                    <p:outputLabel for="mode" value="Work Mode:"/>
+                                    <h:outputText id="mode"
+                                                  value="#{timeRecordDetailController.currentTimeRecord.workMode}"/>
+                                    <p:outputLabel for="work_group" value="Work Group:"/>
+                                    <h:outputText id="work_group"
+                                                  value="#{timeRecordDetailController.currentTimeRecord.workGroup != null ? timeRecordDetailController.currentTimeRecord.workGroup : 'no group assigned'}"/>
+
+                                </p:panelGrid>
+                            </p:outputPanel>
+
+                            <h:outputText rendered="#{timeRecordDetailController.currentTimeRecord == null}"
+                                          value="No current time record has been found."/>
+
+                        </div>
+
+
+                        <p:dialog id="editDialog" widgetVar="editDialog" header="Edit Time Record" showEffect="fade" hideEffect="fade" resizable="true" closable="false">
+                            <p:outputPanel id="editPanel">
+                                <h:panelGrid id="selectedForEdit" columns="2"
+                                             rendered="#{not empty timeRecordDetailController.selectedTimeRecord}">
+                                    <p:outputLabel for="projectEdit" value="Project:"
+                                                   rendered="#{timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE'}"/>
+                                    <p:selectOneMenu id="projectEdit" value="#{timeRecordDetailController.selectedProject}"
+                                                     rendered="#{timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE'}">
+                                        <f:selectItems value="#{timeRecordDetailController.selectableProjectsAsString}"/>
+                                        <p:ajax event="valueChange" listener="#{timeRecordDetailController.onProjectSelect}"
+                                                update="selectedForEdit"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel for="workGroup" value="WorkGroup:"
+                                                   rendered="#{(timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE')
+                                       and (timeRecordDetailController.selectedProject ne 'no project assigned')}"/>
+                                    <p:selectOneMenu id="workGroup" value="#{timeRecordDetailController.selectedWorkGroup}"
+                                                     rendered="#{(timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE')
+                                       and (timeRecordDetailController.selectedProject ne 'no project assigned')}">
+                                        <f:selectItems value="#{timeRecordDetailController.selectableWorkGroupsAsString}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel for="description" value="Description:"
+                                                   rendered="#{timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE'}"/>
+                                    <p:inputText id="description" value="#{timeRecordDetailController.selectedDescription}"
+                                                 rendered="#{timeRecordDetailController.selectedTimeRecord.workMode ne 'OUT_OF_OFFICE'}"/>
+
+                                    <p:outputLabel for="workmode" value="Work Mode:"/>
+                                    <p:selectOneMenu id="workmode" value="#{timeRecordDetailController.selectedWorkMode}"
+                                                     rendered="#{not empty timeRecordDetailController.selectedTimeRecord}">
+                                        <f:selectItems value="#{timeRecordDetailController.workModes}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel for="start" value="Start Time:"/>
+                                    <p:datePicker id="start" value="#{timeRecordDetailController.selectedStartTime}"
+                                                  required="true" requiredMessage="Start time must not be empty."
+                                                  showTime="true"/>
+
+                                    <p:commandButton value="Abort"
+                                                     icon="pi pi-times"
+                                                     oncomplete="PF('editDialog').hide();"
+                                                     update="editDialog"
+                                                     immediate="true"
+                                                     resetValues="true"/>
+                                    <p:commandButton id="saveButton" value="Save" icon="pi pi-save"
+                                                     action="#{timeRecordDetailController.editTimeRecord()}"
+                                                     oncomplete="PF('editDialog').hide();"
+                                                     process="editPanel"
+                                                     update="welcomeForm:currentTR welcomeForm:editMessage"/>
+                                </h:panelGrid>
+                            </p:outputPanel>
+
+                            <p:separator/>
+
+                            <p:outputPanel id="splitPanel">
+                                <h:panelGrid columns="2"
+                                             rendered="#{not empty timeRecordDetailController.selectedTimeRecord}">
+                                    <p:outputLabel for="split" value="Split Time Record at:"/>
+                                    <p:datePicker id="split" value="#{timeRecordDetailController.splitAt}" showTime="true"
+                                                  required="true" requiredMessage="Split time must not be empty."/>
+
+                                    <p:commandButton value="Abort"
+                                                     icon="pi pi-times"
+                                                     oncomplete="PF('editDialog').hide();"
+                                                     update="editDialog"
+                                                     immediate="true"
+                                                     resetValues="true"/>
+                                    <p:commandButton id="splitButton" value="Split"
+                                                     action="#{timeRecordDetailController.splitTimeRecord()}"
+                                                     oncomplete="PF('editDialog').hide();"
+                                                     process="splitPanel"
+                                                     update="welcomeForm:currentTR welcomeForm:editMessage"/>
+
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </p:dialog>
+
+                    </div>
+                    <!-- ...........Current Time Record............ -->
+
+                    <!-- ...........Cumulative Work Hours Today............ -->
+                    <div class="col-12 md:col-6">
+                        <p:outputPanel id="Overview">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Work hours today: #{timeRecordDetailController.todaysTotalDuration} h</h5>
+                                </div>
+                                <div class="form-group" style="display: flex; align-items: center;">
+                                    <p:outputLabel for="groupBy" value="Group time records by:  "/>
+                                    <p:selectOneRadio id="groupBy" value="#{timeRecordChartController.groupBy}">
+                                        <f:selectItem itemLabel="Project" itemValue="Project"/>
+                                        <f:selectItem itemLabel="Work Group" itemValue="Work Group"/>
+                                        <f:selectItem itemLabel="Work Mode" itemValue="Work Mode"/>
+                                    </p:selectOneRadio>
+                                    <p:commandButton value="Submit"
+                                                     actionListener="#{timeRecordChartController.createChart()}"
+                                                     update="chart, welcomeForm:editMessage" icon="pi pi-check"/>
+                                </div>
+
+
+                                <p:barChart type="bar" model="#{timeRecordChartController.barModel}" id="chart"
+                                            widgetVar="chart"/>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+
+
+                    <!-- ...........Cumulative Work Hours End............ -->
+
+
+                    <!-- ...........Users from your groups............ -->
+                    <div class="col-12 md:col-6">
+                        <p:outputPanel id="groups">
+                            <div class="card" style="height: 100%">
+                                <div class="card-header">
+                                    <h5>Coworkers from your groups:</h5>
+                                </div>
+
+                                <p:dataTable value="#{userListController.users}" id="coWorkerTable" var="user" reflow="true">
+                                    <p:column headerText="First Name"
+                                              sortBy="#{user.firstName}" filterBy="#{user.firstName}"
+                                              filterMatchMode="contains">
+                                        <h:outputText value="#{user.firstName}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Last Name"
+                                              sortBy="#{user.lastName}" filterBy="#{user.lastName}"
+                                              filterMatchMode="contains">
+                                        <h:outputText value="#{user.lastName}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Room"
+                                              sortBy="#{user.temperaDevice.accessPoint.room.roomNumber}"
+                                              filterBy="#{user.temperaDevice.accessPoint.room.roomNumber}"
+                                              filterMatchMode="contains">
+                                        <h:outputText value="#{user.temperaDevice.accessPoint.room.roomNumber}"/>
+                                    </p:column>
+                                    <p:column headerText="Last Name"
+                                              sortBy="#{user.username}" filterBy="#{user.username}"
+                                              filterMatchMode="contains">
+                                        <h:outputText value="#{user.username}"/>
+                                    </p:column>
+                                    <p:column headerText="Work mode"
+                                              sortBy="#{searchController.getUserWorkModeName(user)}"
+                                              filterBy="#{searchController.getUserWorkModeName(user)}"
+                                              filterMatchMode="contains">
+                                        <i id="userxIcon" class="pi pi-user"
+                                           title="#{searchController.getUserWorkModeName(user)}"
+                                           style="font-size: 2rem; color: #{searchController.getUserWorkModeColour(user)};"/>
+                                    </p:column>
+                                </p:dataTable>
+
+                            </div>
+                        </p:outputPanel>
+
+                    </div>
+                    <!-- ...........Users from your groups end............ -->
+
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
