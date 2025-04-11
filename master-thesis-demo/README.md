@@ -1,18 +1,20 @@
 <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
-
-
+          
 # :dna: Maternal sleep duration and quality during pregnancy and newborn telomere length: A prospective study with objective and subjective sleep measures.
 
 > ⚠️ This repository was created to **showcase my Master’s thesis** and includes:
 > - The `R` scripts used for data preprocessing and analysis  
-> - The final written thesis report (PDF)  
-> - A summary of the project in this README  
+> - A summary of the project in this README
+>
+> You can access the published thesis in full at the following link: [Maternal sleep duration and quality during pregnancy and newborn telomere length : a prospective study with objective and subjective sleep measures](https://ulb-dok.uibk.ac.at/urn/urn:nbn:at:at-ubi:1-167749)  
+>  
+> To inspect the technical part of my work (data preprocessing and analysis) see [Technical Background](#technical-background)
 > 
 > Please note:
 > - This is **not a full reproduction** of all the work I have done during the thesis  
 > - **Due to legal and ethical restrictions, the dataset is not included** 
 >
-> To inspect the technical part of my work (data preprocessing and analysis) see [Technical Background](#technical-background)
+
 
 ## :books: Introduction
 
@@ -44,9 +46,8 @@ questionnaire and a sleep diary. Objective sleep duration was measured using che
 This section showcases the technical workflow behind my Master's thesis and is centered around the preprocessing and statistical analysis of sensor data.
 
 ## :wrench: Tools & Environment
-- **Language:** <i class="devicon-r-plain colored"></i>
+- **Language:** <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/r/r-original.svg" height=20/>
 - **Libraries:** `ggplot2`, `roxygen2`, `todor`
-- **Version Control:** <i class="devicon-git-plain colored"></i>
 - **Structure:** Modular `R` scripts with orchestrated execution (see [scripts/](scripts/))
 
 ## :signal_strength: Data Overview
@@ -87,7 +88,7 @@ The entire workflow is organized in the scripts/ folder. Key features:
 - Modular function files (e.g., `sensor_functions.R` -> `sensor_preprocessing.R`) contain reusable code for data handling.
 
 ## :chart_with_upwards_trend: Visulatization
-All figures were generated using ``ggplot2``, with custom visualizations for distributions, model predictions, and interaction effects.
+All figures were generated using ``ggplot2``.
 
 ## :warning: Challanges Addressed
 - Defining accurate sleep/wake events with real-world sensor noise
