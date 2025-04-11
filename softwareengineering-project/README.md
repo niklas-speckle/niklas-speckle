@@ -58,4 +58,4 @@ A detailed list of project requirements can be found here: [Requirements PDF](ar
 
 ## :clipboard: Architecture Overview
 
-![](architekturuebersicht.jpg)
+![](artefacts/architekturuebersicht.jpg)
