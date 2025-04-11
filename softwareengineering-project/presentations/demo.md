@@ -11,3 +11,4 @@
 ![](admin-menu.jpg)
 
 # Administration of Work Groups and Projects
+![](projects.jpg)
