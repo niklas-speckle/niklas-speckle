@@ -9,11 +9,7 @@
 >   
 > Due to licensing restrictions, parts of the project have been removed. Therefore, this repository serves as a showcase of the project and is not a fully executable system. You can find a quick visual demo here:  [Showcase](presentations/demo.md).
 
-## :question: Overview
-
-**Tempera** is an interdisciplinary IoT project for smart monitoring of working hours and indoor climate at the workplace. It combines hardware, software, and web technologies to give both employees and team leads a transparent view of working conditions and activities.
-
-## :bulb: Project Idea
+## :bulb: Project Overview
 
 Tempera is a smart device installed at the employee's desk, which:
 - records working hours and working status at the push of a button,
