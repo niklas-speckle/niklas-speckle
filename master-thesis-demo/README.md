@@ -26,7 +26,7 @@ It is recommended that adults get between seven and nine hours of sleep per nigh
 
 ## :microscope: Methods
 
-A total of 475 healthy pregnant women were recruited for a prospective longitudinal cohort study. Participants attended two laboratory visits during the first and third trimesters of pregnancy. Following each visit, a four-day ecological momentary assessment (EMA) was conducted to measure subjective and objective sleep variables. Subjective sleep quality and sleep duration were assessed through a sleep
+A total of 475 healthy pregnant women were recruited for a prospective study. Participants attended two laboratory visits during the first and third trimesters of pregnancy. Following each visit, a four-day ecological momentary assessment (EMA) was conducted to measure subjective and objective sleep variables. Subjective sleep quality and sleep duration were assessed through a sleep
 questionnaire and a sleep diary. Objective sleep duration was measured using chest actigraphy over four consecutive days. Newborn telomere length was measured in isolated cord blood mononuclear cells collected at birth using quantitative polymerase chain reaction (qPCR).
 
 ## :chart_with_upwards_trend: Results
