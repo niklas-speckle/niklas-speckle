@@ -1,15 +1,21 @@
 # :information_desk_person: About Me
 
-Throughout my academic and professional journey, I have followed a path that combines statistical analysis, programming, and healthcare. My interest in programming and statistics was first sparked during my time as a student assistant at the Department of Statistics. This experience led me to specialize in statistics whenever possible by selecting relevan electives throughout my studies. Fascinated by the power of data to uncover insights, I initially pursued a Master’s degree in Data Science. However, I soon realized that I was missing the human and health-related aspects that had always been central to my interests. Consequently, I decided to combine psychology and computer science, allowing me to merge my passion for healthcare with my enthusiasm for data analysis.
+Throughout my academic and professional career, I have followed a path that combines statistical analysis, software development, and healthcare. My interest in programming and statistics was first sparked during my time as a student assistant at the Department of Statistics. This experience led me to specialize in programming and statistics whenever possible by choosing relevant electives throughout my studies. Fascinated by the power of data to uncover insights, I initially pursued a Master's degree in Data Science. However, I soon realized that I was missing the human and health-related aspects that had always been central to my interests. As a result, I decided to combine psychology and computer science, which allowed me to combine my passion for healthcare with my enthusiasm for software development and data analysis.
 
 # :books: Educational Background
 
 - :computer: **Extension Program in Computer Science**
+  - Two-year, application-oriented computer science program at Bachelor level. 
+  - Focus on software Development and data engineering.
+  - See [binrayibk](https://binaryibk.at/studium/ews-informatik/) for more information.
 - :busts_in_silhouette: **Bachelor and Master in Psychology**
+  - Focus on clinical research.
 - :chart_with_upwards_trend: **Bachelor in Management and Economics**
+  - Focus on Economics and Statistics.
 
 📕 **Master Thesis:**   *Maternal sleep duration and quality during pregnancy and newborn telomere length: A prospective study with objective and subjective sleep measures.*  
-- For my master's thesis, I worked with actigraphy data to measure sleep duration. This confirmed my interest in working with complex clinical datasets.
+
+- See [Master Thesis](master-thesis-demo) for more information.
 
 # :hammer: Professional Background
 
@@ -67,6 +73,9 @@ Throughout my academic and professional journey, I have followed a path that com
     <td align="center">
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/junit/junit-original-wordmark.svg" width="50"/>
     </td>
+    <td align="center">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain-wordmark.svg" width="50"/>
+    </td>
   </tr>
 </table>
 
@@ -84,7 +93,6 @@ Throughout my academic and professional journey, I have followed a path that com
 - Linear Algebra and Mathematics (10 ECTS)
 
 # Projects 
-- [Tempera - Software Engineering](softwareengineering-project)
-- [Master Thesis](master-thesis-demo)
-
-More projects will be available shortly on my GitHub.
+- [Tempera - Software Engineering](softwareengineering-project): Tempera is a smart workplace monitoring system that combines IoT hardware and a Java web application to track work modes and environmental conditions like room climate.
+- [DepressionApp](https://github.com/niklas-speckle/depressionApp): DepressionApp is an application designed to guide depressed patients through their illness, while helping doctors track symptoms and improve treatment strategies. This project is currently under development.
+- [Master Thesis](master-thesis-demo): Maternal sleep duration and quality during pregnancy and newborn telomere length: A prospective study with objective and subjective sleep measures.
