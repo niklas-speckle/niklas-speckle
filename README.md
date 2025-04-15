@@ -6,7 +6,7 @@ Throughout my academic and professional career, I have followed a path that comb
 
 - :computer: **Extension Program in Computer Science**
   - Two-year, application-oriented computer science program at Bachelor level. 
-  - Focus on software Development and data engineering.
+  - Focus on software development and data engineering.
   - See [binrayibk](https://binaryibk.at/studium/ews-informatik/) for more information.
 - :busts_in_silhouette: **Bachelor and Master in Psychology**
   - Focus on clinical research.
