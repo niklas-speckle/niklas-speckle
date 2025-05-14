@@ -6,7 +6,7 @@ Throughout my academic and professional career, I have followed a path that comb
 
 - :computer: **Extension Program in Computer Science**
   - Two-year, application-oriented computer science program at Bachelor level. 
-  - Focus on software Development and data engineering.
+  - Focus on software development and data engineering.
   - See [binrayibk](https://binaryibk.at/studium/ews-informatik/) for more information.
 - :busts_in_silhouette: **Bachelor and Master in Psychology**
   - Focus on clinical research.
@@ -22,9 +22,9 @@ Throughout my academic and professional career, I have followed a path that comb
 - 👪 **Social Worker**: 3-year experience in working with psychiatric patients
 - 📊 **Student Assistant at the Department of Statistics**: 4.5-year experience in Programming with <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/r/r-original.svg" width = 20, height = 20/>
 
-# Skills
+# 🤹 Skills
 
-## Programming
+## 🧑‍💻 Programming
 
 <table align="center" border="0">
   <tr>
@@ -61,7 +61,7 @@ Throughout my academic and professional career, I have followed a path that comb
   </tr>
 </table>
 
-## Further Technologies
+## 🔌 Further Technologies
 <table align="center" border="0">
   <tr>
     <td align="center">
@@ -79,7 +79,23 @@ Throughout my academic and professional career, I have followed a path that comb
   </tr>
 </table>
 
-## Statistics
+## 📚 Currently Learning
+<table align="center" border="0">
+  <tr>
+    <td align="center">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" width="50"/>
+    </td>
+    <td align="center">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original-wordmark.svg" width="50"/>
+    </td>
+    <td align="center">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original-wordmark.svg" width="50"/>
+    </td>
+  </tr>
+</table>
+
+
+## 📈 Statistics
 - Introduction to Statistics (7.5 ECTS)
 - Statistical Modelling (7.5 ECTS)
 - Regression Analysis (7.5 ECTS)
@@ -87,12 +103,12 @@ Throughout my academic and professional career, I have followed a path that comb
 - Machine Learning (7.5 ECTS)
 - Meta Analyses (5 ECTS)
 
-## Further Analytical Skills
+## 🔍 Further Analytical Skills
 - Diagnostics and Psychometry (20 ECTS)
 - Text Mining (5 ECTS)
 - Linear Algebra and Mathematics (10 ECTS)
 
-# Projects 
+# 👨‍💻 Projects 
 - [Tempera - Software Engineering](softwareengineering-project): Tempera is a smart workplace monitoring system that combines IoT hardware and a Java web application to track work modes and environmental conditions like room climate.
 - [DepressionApp](https://github.com/niklas-speckle/depressionApp): DepressionApp is an application designed to guide depressed patients through their illness, while helping doctors track symptoms and improve treatment strategies. This project is currently under development.
 - [Master Thesis](master-thesis-demo): Maternal sleep duration and quality during pregnancy and newborn telomere length: A prospective study with objective and subjective sleep measures.
